@@ -1,16 +1,19 @@
 ﻿using UnityEngine;
+using UnityEngine.Networking;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using SocketIO;
 
-public class NetworkManager : MonoBehaviour {
-
+public class ServerManager : MonoBehaviour {
+	
 	public bool dontDestroyOnLoad = false;
 	bool isConnected = false;
 
-	public GameObject ErrorMessage;
+	//public GameObject ErrorMessage;
 
 	private SocketIOComponent socket;
+	public NetworkManager network;
 
 	//GameManager gameManager;
 
@@ -24,33 +27,19 @@ public class NetworkManager : MonoBehaviour {
 		socket = go.GetComponent<SocketIOComponent>();
 
 		//Register what kind of messages the client receives
-		socket.On ("new message", NewMessage);
 		socket.On ("ConnectionTest", NetTest);
-		socket.On ("Response", NetResponse);
+		socket.On ("JoinRoom", NetLogin);
+		//socket.On ("Response", NetResponse);
 		socket.Connect ();
 
 		//Start Connection Test
 		if (socket.IsConnected) {
-			Debug.Log ("Connected to Server!");
+			//Debug.Log ("Connected to Server!");
 			StartCoroutine("ConnectionTest");
 		} else {
 			Debug.Log ("Not Connected...");
 		}
 
-	}
-
-    //Send request to query about the scene 
-    public void RequestScene(string IMEI)
-    {
-        JSONObject req_scene = new JSONObject();
-        req_scene.AddField("RequestType", "RetrieveScene");
-        req_scene.AddField("IMEI", IMEI);
-        socket.Emit("Request", req_scene);
-    }
-
-	//Obsolete
-	public void NewMessage(SocketIOEvent socketEvent) {
-		Debug.Log ("Response from server! " + socketEvent.data);
 	}
 
 	//This function is called when the server responds to Connection Test. 
@@ -63,13 +52,33 @@ public class NetworkManager : MonoBehaviour {
 		StopCoroutine ("ConnectionTest");
 
 		//Enable Game Logic in the Scene. 
-		/*
-		GameObject go = GameObject.FindGameObjectWithTag ("GameController");
-		gameManager = go.GetComponent<GameManager> ();
-		((MonoBehaviour)gameManager).enabled = true;
-		*/
+		//GameObject go = GameObject.FindGameObjectWithTag ("GameController");
+		//gameManager = go.GetComponent<GameManager> ();
+		//((MonoBehaviour)gameManager).enabled = true;
+		socket.Emit ("JoinRoom");
 	}
 
+	public void NetLogin(SocketIOEvent socketEvent) {
+		JSONObject data = socketEvent.data;
+		Debug.Log ("Response from server: " + data.ToString ());
+		bool isHost = data.GetField ("isHost").b;
+		if (isHost) {
+			string hostIP = data.GetField("HostIP").str;
+			string debug = "You are the new host: " + hostIP;
+			Debug.Log (debug);
+			UIDebugScript.write (debug);
+			network.StartHost ();
+		} else {
+			string hostIP = data.GetField("HostIP").str;
+			string clientIP = data.GetField("ClientIP").str;
+			string debug = "You are the client " + clientIP + " connected to " + hostIP;
+			Debug.Log (debug);
+			UIDebugScript.write (debug);
+			network.networkAddress = hostIP;
+			network.StartClient ();
+		}
+	}
+	/*
 	//This function is called when the Server responds to a Request. 
 	//The Response is sent to the current Scene's GameManager to handle it. 
 	public void NetResponse(SocketIOEvent socketEvent) {
@@ -77,23 +86,24 @@ public class NetworkManager : MonoBehaviour {
 		Debug.Log ("Response from server: " + data);
 		//gameManager.handleResponse (data);
 	}
+	*/	
 
 	//This function sends pings "abcd" to the Server until the Server Responds. 
 	private IEnumerator ConnectionTest()
 	{
 		int waitTime = 50;
 		while (waitTime > 0) {
-			Dictionary<string, string> data = new Dictionary<string, string> ();
-			data ["node"] = "ConnectionTest";
-			data ["message"] = "abcd";
-			socket.Emit ("ConnectionTest", new JSONObject (data));
+			JSONObject data = new JSONObject ();
+			data.AddField ("Save", "abcd");
+			socket.Emit ("ConnectionTest", data);
 			Debug.Log ("ConnectionTest abcd");
 			yield return new WaitForSeconds (0.1f);
 			yield return null;
 			waitTime--;
 		}
 		if (!isConnected) {
-			Instantiate (ErrorMessage, Vector3.zero, Quaternion.identity);
+			Debug.Log("Can't connect to server...");
+			//Instantiate (ErrorMessage, Vector3.zero, Quaternion.identity);
 		}
 	}
 	/*
