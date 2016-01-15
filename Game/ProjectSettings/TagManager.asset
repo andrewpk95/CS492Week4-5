@@ -38,6 +38,18 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Background
+    uniqueID: 1808357997
+    locked: 0
+  - name: Particles
+    uniqueID: 1679292809
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Fighters
+    uniqueID: 796999559
+    locked: 0
+  - name: Effects
+    uniqueID: 350559817
     locked: 0
