@@ -1,15 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class GameLogic : MonoBehaviour {
+public interface GameLogic {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+	void OnPlayerDeath(GameObject player);
+
+	void OnGameOver();
+
 }

@@ -11,12 +11,13 @@ GameObject:
   - 212: {fileID: 21258156}
   - 114: {fileID: 11496440}
   - 114: {fileID: 11431916}
+  - 114: {fileID: 11468762}
   - 114: {fileID: 11498200}
   - 50: {fileID: 5028146}
   - 61: {fileID: 6194786}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Fighter
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -59,7 +60,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
@@ -75,7 +76,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed2061bd6e9bd41f0a1ed567f7c2c2b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: 0
   isDead: 0
+  hitStunned: 0
+  isHitting: 0
+  name: 
+  walkSpeed: 0
+  dashSpeed: 0
+  weight: 0
+  velocity: {x: 0, y: 0}
+--- !u!114 &11468762
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 144222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba7b935a2a8f0414186d8d45148bbb44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11496440
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -183,7 +203,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_IsTrigger
-      value: 1
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_TagString
+      value: Fighter
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
