@@ -4,6 +4,7 @@ using System.Collections;
 
 public class FighterController : NetworkBehaviour {
 
+	public bool isDead;
 	// Use this for initialization
 	void Start () {
 	
@@ -18,5 +19,16 @@ public class FighterController : NetworkBehaviour {
 		float y = GameInputManager.JoystickPosition.y * Time.deltaTime;
 
 		transform.Translate(x, y, 0);
+	}
+
+	void OnTriggerEnter2D (Collider2D col) {
+		Debug.Log ("Entered the battlefield");
+	}
+
+	void OnTriggerExit2D (Collider2D col) {
+		if (col.gameObject.name == "BlastZone") {
+			Debug.Log (this.name + " left the zone!");
+			isDead = true;
+		}
 	}
 }

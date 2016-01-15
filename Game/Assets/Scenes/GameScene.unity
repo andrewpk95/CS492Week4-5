@@ -654,6 +654,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 821463510}
   - 61: {fileID: 821463511}
+  - 114: {fileID: 821463512}
   m_Layer: 0
   m_Name: BlastZone
   m_TagString: Untagged
@@ -686,7 +687,18 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 4, y: 2}
+--- !u!114 &821463512
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 821463509}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73f81ee05247e4d24bbe81a97400965b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &829439940
 GameObject:
   m_ObjectHideFlags: 0

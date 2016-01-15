@@ -151,6 +151,7 @@
      <Compile Include="Assets\NGUI\Scripts\UI\UITooltip.cs" />
      <Compile Include="Assets\NGUI\Scripts\UI\UIViewport.cs" />
      <Compile Include="Assets\Scripts\Fighter\FighterController.cs" />
+     <Compile Include="Assets\Scripts\GameLogic\BlastZone.cs" />
      <Compile Include="Assets\Scripts\GameLogic\GameLogic.cs" />
      <Compile Include="Assets\Scripts\GameLogic\TimedGameLogic.cs" />
      <Compile Include="Assets\Scripts\GameLogic\UIJoystick.cs" />
