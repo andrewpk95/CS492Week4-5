@@ -1,5 +1,6 @@
 package com.passion.hamfeed;
 
+import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private static RelativeLayout frag_con;
 
-    private static final String TAG = "HamFeed Desire";
+    private static final String TAG = "MainActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        frag_con = (RelativeLayout)findViewById(R.id.fragment_container);
     }
 
 
@@ -89,6 +89,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.i(TAG, "is this a real back place?");
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            Log.i(TAG, "call onActivityResult function");
+            fragment.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     /**
@@ -119,18 +129,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = null;
-            switch(getArguments().getInt(ARG_SECTION_NUMBER)){
-                case 1: //chatting app
-                    Log.i(TAG, "1 is onCreated");
-                    rootView = inflater.inflate(R.layout.fragment_chat, container, false);
-                    break;
-                case 2: //picture version control
-                    rootView = inflater.inflate(R.layout.fragment_main, container, false);
-                    TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-                    textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-                    break;
-            }
+            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
             return rootView;
         }
     }
@@ -149,6 +150,13 @@ public class MainActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
+            switch(position){
+                case 0:
+                    return new ChatFragment();
+                case 1:
+                    break;
+                //or side menu is better??
+            }
             return PlaceholderFragment.newInstance(position + 1);
         }
 

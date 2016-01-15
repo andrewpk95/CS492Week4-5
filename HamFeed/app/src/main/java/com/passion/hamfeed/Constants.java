@@ -4,5 +4,5 @@ package com.passion.hamfeed;
  * Created by Junhong on 2016-01-14.
  */
 public class Constants {
-    public static final String CHAT_SERVER_URL = "http://143.248.140.92:2222";
+    public static final String CHAT_SERVER_URL = "http://143.248.140.92:1111";
 }

@@ -19,10 +19,11 @@
             android:id="@+id/message"
             style="?android:textAppearanceMedium"
             android:textColor="?android:textColorPrimary"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:paddingLeft="@dimen/spacing"
             android:paddingRight="@dimen/spacing"
-            android:singleLine="true"/>
+            android:singleLine="false"/>
 
 </LinearLayout>

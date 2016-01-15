@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -59,6 +60,10 @@ public class ChatFragment extends Fragment {
         }
     }
 
+    //Added
+    private String TAG = "ChatFragment";
+    private ImageButton send;
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -80,20 +85,19 @@ public class ChatFragment extends Fragment {
         mSocket.on("stop typing", onStopTyping);
         mSocket.connect();
 
-//        Intent intent = new Intent(getActivity(), MyListActivity.class);
-//        startActivityForResult(intent, REQUEST_LOGIN);
+        startSignIn();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_main, container, false);
+        return inflater.inflate(R.layout.fragment_chat, container, false);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-
+        Log.i(TAG, "destory the activity?");
         mSocket.disconnect();
         mSocket.off(Socket.EVENT_CONNECT_ERROR, onConnectError);
         mSocket.off(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
@@ -147,8 +151,8 @@ public class ChatFragment extends Fragment {
             }
         });
 
-        ImageButton sendButton = (ImageButton) view.findViewById(R.id.send_button);
-        sendButton.setOnClickListener(new View.OnClickListener() {
+        send = (ImageButton) view.findViewById(R.id.send_button);
+        send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 attemptSend();
@@ -158,18 +162,31 @@ public class ChatFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.i(TAG, "onActivityResult super");
         super.onActivityResult(requestCode, resultCode, data);
+        Log.i(TAG, "onActivityResult");
         if (Activity.RESULT_OK != resultCode) {
             getActivity().finish();
             return;
         }
-
+        Log.i(TAG, "onActivityResult 뭐하냐?");
         mUsername = data.getStringExtra("username");
         mPosition = data.getStringExtra("position");
         int numUsers = data.getIntExtra("numUsers", 1);
-
+        Log.i(TAG, "mUsername " + mUsername + " mPosition : " + mPosition);
         addLog(getResources().getString(R.string.message_welcome));
         addParticipantsLog(numUsers);
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        Log.i(TAG, "onPause 중단시키기");
     }
 
     @Override
@@ -230,9 +247,12 @@ public class ChatFragment extends Fragment {
     }
 
     private void attemptSend() {
+        Log.i(TAG, "mUsername is null");
         if (null == mUsername) return;
+        Log.i(TAG, "socket is connected()?");
         if (!mSocket.connected()) return;
-
+        Log.i(TAG, "socket is connected()? 237");
+        Log.i(TAG, "249 attemptSend()");
         mTyping = false;
 
         String message = mInputMessageView.getText().toString().trim();
@@ -240,18 +260,20 @@ public class ChatFragment extends Fragment {
             mInputMessageView.requestFocus();
             return;
         }
-
+        Log.i(TAG, "257 attemptSend()");
         mInputMessageView.setText("");
         addMessage(mUsername, message);
 
         // perform the sending message attempt.
         mSocket.emit("new message", message);
+        Log.i(TAG, "263 attemptSend()");
     }
 
     private void startSignIn() {
-//        mUsername = null;
-//        Intent intent = new Intent(getActivity(), LoginActivity.class);
-//        startActivityForResult(intent, REQUEST_LOGIN);
+        mUsername = null;
+        Intent intent = new Intent(getActivity(), LoginActivity.class);
+        Log.i(TAG, "어디로 결과를 보내니? : " + getActivity().toString());
+        startActivityForResult(intent, REQUEST_LOGIN);
     }
 
     private void leave() {
