@@ -11,10 +11,11 @@ GameObject:
   - 212: {fileID: 21258156}
   - 114: {fileID: 11496440}
   - 114: {fileID: 11431916}
-  - 114: {fileID: 11468762}
   - 114: {fileID: 11498200}
   - 50: {fileID: 5028146}
   - 61: {fileID: 6194786}
+  - 95: {fileID: 9536192}
+  - 114: {fileID: 11414518}
   m_Layer: 0
   m_Name: Player
   m_TagString: Fighter
@@ -50,7 +51,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!61 &6194786
 BoxCollider2D:
   m_ObjectHideFlags: 1
@@ -62,9 +63,45 @@ BoxCollider2D:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_UsedByEffector: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.0014233589, y: 0.15905598}
   serializedVersion: 2
-  m_Size: {x: 0.2, y: 0.2}
+  m_Size: {x: 0.12841277, y: 0.28078455}
+--- !u!95 &9536192
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 144222}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: dbe87f3f184d34687934c344e440f99f, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &11414518
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 144222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1590678366, guid: 870353891bb340e2b2a9c8707e7419ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Animator: {fileID: 9536192}
+  m_ParameterSendBits: 127
+  param0: 
+  param1: 
+  param2: 
+  param3: 
+  param4: 
+  param5: 
 --- !u!114 &11431916
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -77,25 +114,36 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: 0
+  anim: {fileID: 0}
+  sprite: {fileID: 0}
+  isFacingRight: 0
   isDead: 0
-  hitStunned: 0
-  isHitting: 0
-  name: 
-  walkSpeed: 0
-  dashSpeed: 0
-  weight: 0
+  isWalking: 0
+  isDashing: 0
+  isHitStunned: 0
+  isBusy: 0
+  busyDuration: 0
+  isJumping: 0
+  isDoubleJumping: 0
+  isGrounded: 0
+  isFalling: 0
+  isSpiked: 0
+  playerName: 
+  walkSpeed: 1
+  dashSpeed: 2
+  acceleration: 0.1
+  deceleration: 0.1
+  airSpeed: 1
+  fallSpeed: 3
+  jumpImpulse: 5
+  doubleJumpImpulse: 5
+  weight: 1
+  hurtBox: {fileID: 6194786}
   velocity: {x: 0, y: 0}
---- !u!114 &11468762
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 144222}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba7b935a2a8f0414186d8d45148bbb44, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  isConnected: 0
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!114 &11496440
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -174,7 +222,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 796999559
   m_SortingOrder: 0
-  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300072, guid: b62955136611c4b27b8c226d8eafbc8b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -209,6 +257,75 @@ Prefab:
       propertyPath: m_TagString
       value: Fighter
       objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300036, guid: b62955136611c4b27b8c226d8eafbc8b,
+        type: 3}
+    - target: {fileID: 0}
+      propertyPath: hurtBox
+      value: 
+      objectReference: {fileID: 6194786}
+    - target: {fileID: 0}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: layerMask.m_Bits
+      value: 256
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Constraints
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: airSpeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: fallSpeed
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: walkSpeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: dashSpeed
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: weight
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_LocalScale.x
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_LocalScale.y
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_LocalScale.z
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: acceleration
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: deceleration
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: isFalling
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Animator
+      value: 
+      objectReference: {fileID: 9536192}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 144222}

@@ -199,9 +199,9 @@ GameObject:
   - 212: {fileID: 268829986}
   - 61: {fileID: 268829985}
   - 50: {fileID: 268829984}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Ground
-  m_TagString: Untagged
+  m_TagString: Map
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -217,7 +217,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 0
+  m_GravityScale: 1
   m_IsKinematic: 1
   m_Interpolate: 0
   m_SleepingMode: 1
@@ -274,7 +274,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 268829983}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.2, z: 0}
+  m_LocalPosition: {x: 0, y: -1.664, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 0}
@@ -593,7 +593,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 1
+  orthographic size: 2
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -630,7 +630,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf65b5d71f6ac433480dc3a138f66528, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camera: {fileID: 0}
 --- !u!1 &749472204
 GameObject:
   m_ObjectHideFlags: 0
@@ -679,6 +678,10 @@ MonoBehaviour:
   isKeyboardEmulation: 1
   isPressed: 0
   isInitialized: 0
+  leftKey: 102
+  rightKey: 104
+  upKey: 116
+  downKey: 103
 --- !u!65 &749472208
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -830,7 +833,7 @@ GameObject:
   - 61: {fileID: 821463511}
   m_Layer: 0
   m_Name: BlastZone
-  m_TagString: Untagged
+  m_TagString: BlastZone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -860,7 +863,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Size: {x: 3.6, y: 2}
+  m_Size: {x: 6.6, y: 4}
 --- !u!1 &829439940
 GameObject:
   m_ObjectHideFlags: 0
@@ -912,7 +915,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd7acc54f80a44f7db9c994c2d65ba49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeLength: 10
+  timeLength: 120
   startTime: 0
   remainingTime: 0
 --- !u!1 &885920604
@@ -1386,6 +1389,10 @@ MonoBehaviour:
   isKeyboardEmulation: 1
   isPressed: 0
   isInitialized: 0
+  leftKey: 97
+  rightKey: 100
+  upKey: 119
+  downKey: 115
 --- !u!65 &1656871695
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1446,6 +1453,10 @@ MonoBehaviour:
   isKeyboardEmulation: 1
   isPressed: 0
   isInitialized: 0
+  leftKey: 106
+  rightKey: 108
+  upKey: 105
+  downKey: 107
 --- !u!65 &1683114545
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1685,6 +1696,13 @@ MonoBehaviour:
   g_AttackButton: {fileID: 749472204}
   g_GuardButton: {fileID: 1683114542}
   g_JumpButton: {fileID: 1863964476}
+  joystickInput: 0
+  joystickTapTime: 0.2
+  joystickHoldTime: 0
+  joystickInitialPosition: {x: 0, y: 0}
+  jumpInput: 0
+  jumpTapTime: 0.15
+  jumpHoldTime: 0
 --- !u!4 &1827124278
 Transform:
   m_ObjectHideFlags: 0
@@ -1905,6 +1923,10 @@ MonoBehaviour:
   isKeyboardEmulation: 1
   isPressed: 0
   isInitialized: 0
+  leftKey: 276
+  rightKey: 275
+  upKey: 273
+  downKey: 274
 --- !u!65 &1863964479
 BoxCollider:
   m_ObjectHideFlags: 0

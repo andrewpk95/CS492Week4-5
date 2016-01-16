@@ -14,22 +14,24 @@ public class GameInputManager : MonoBehaviour {
 	UIJoystick GuardButton;
 	UIJoystick JumpButton;
 
-	public enum InputType
-	{
-		None,
-		AttackTap,
-		AttackStrong,
-		Guard,
-		Roll,
-		JumpTap,
-		JumpSwipe
-	}
+	//Variables to process input
+	public bool joystickInput;
+	public float joystickTapTime;
+	public float joystickHoldTime;
+	public Vector2 joystickInitialPosition;
+
+	public bool jumpInput;
+	public float jumpTapTime;
+	public float jumpHoldTime;
 
 	//Final Output for other classes to use
 	public static Vector2 JoystickPosition;
+	public static bool isJoystickButtonPressed;
 	public static bool isAttackButtonPressed;
 	public static bool isGuardButtonPressed;
 	public static bool isJumpButtonPressed;
+	public static bool isWalk;
+	public static bool isDash;
 	public static InputType inputType;
 	public static Vector2 inputDirection;
 
@@ -44,12 +46,37 @@ public class GameInputManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		JoystickPosition = Joystick.position;
+		isJoystickButtonPressed = Joystick.isPressed;
 		isAttackButtonPressed = AttackButton.isPressed;
 		isGuardButtonPressed = GuardButton.isPressed;
 		isJumpButtonPressed = JumpButton.isPressed;
+		JoystickProcess ();
 		AttackButtonProcess ();
 		GuardButtonProcess ();
 		JumpButtonProcess ();
+	}
+
+	void JoystickProcess() {
+		if (isJoystickButtonPressed && !joystickInput) {
+			joystickInput = true;
+			joystickInitialPosition = Joystick.position;
+		}
+		if (!isJoystickButtonPressed) {
+			joystickInput = false;	
+			isWalk = false;
+			isDash = false;
+			joystickHoldTime = 0f;
+		}
+		if (JoystickPosition.magnitude > 0.9) {
+			isWalk = false;
+			isDash = true;
+		} else if (JoystickPosition.magnitude > 0.2) {
+			isWalk = true;
+			isDash = false;
+		}
+		if (joystickInput) {
+			joystickHoldTime += Time.deltaTime;
+		}
 	}
 
 	void AttackButtonProcess() {
@@ -61,6 +88,20 @@ public class GameInputManager : MonoBehaviour {
 	}
 
 	void JumpButtonProcess() {
-
+		if (isJumpButtonPressed && !jumpInput) {
+			jumpInput = true;
+		}
+		if (!isJumpButtonPressed && jumpInput || jumpHoldTime > jumpTapTime) {
+			jumpInput = false;
+			if (jumpHoldTime > jumpTapTime) {
+				inputType = InputType.JumpHold;
+			} else {
+				inputType = InputType.JumpTap;
+			}
+			jumpHoldTime = 0f;
+		}
+		if (jumpInput) {
+			jumpHoldTime += Time.deltaTime;
+		}
 	}
 }
