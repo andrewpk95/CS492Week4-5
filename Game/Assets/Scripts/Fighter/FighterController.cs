@@ -20,7 +20,6 @@ public class FighterController : NetworkBehaviour, Fighter {
 	public bool isDashing;
 	public bool isHitStunned;
 	public bool isBusy;
-	public float busyDuration;
 	public bool isJumping;
 	public bool isDoubleJumping;
 	public bool isGrounded;
@@ -73,19 +72,11 @@ public class FighterController : NetworkBehaviour, Fighter {
 		if (!isLocalPlayer)
 			return;
 		rectBox = new Rect (hurtBox.bounds.min.x, hurtBox.bounds.min.y, hurtBox.bounds.size.x, hurtBox.bounds.size.y);
-		busyDuration -= Time.fixedDeltaTime;
-		if (busyDuration <= 0) {
-			busyDuration = 0;
-			isBusy = false;
-		}
+		isBusy = anim.GetBool ("isBusy");
 		UpdateControl ();
 		UpdatePhysics ();
 		rb.velocity = velocity;
-		if (isFacingRight) {
-			sprite.flipX = false;
-		} else {
-			sprite.flipX = true;
-		}
+		Flip ();
 	}
 
 	void UpdateControl() {
@@ -143,16 +134,39 @@ public class FighterController : NetworkBehaviour, Fighter {
 			velocity.x = newVelocityX;
 
 			//Update Attack input
-			if (GameInputManager.isAttackButtonPressed) {
+			if (GameInputManager.inputType == InputType.AttackStrong) {
+				Debug.Log ("Attack Strong pressed");
+				GameInputManager.inputType = InputType.None;
+				if (isGrounded) { //Ground Moves
+					if (GameInputManager.inputDirection == Vector2.left) {
+						isFacingRight = false;
+						Flip ();
+						anim.SetTrigger ("SideSmash");
+					} else if (GameInputManager.inputDirection == Vector2.right) {
+						isFacingRight = true;
+						Flip ();
+						anim.SetTrigger ("SideSmash");
+					} else if (GameInputManager.inputDirection == Vector2.up) {
 
+					} else if (GameInputManager.inputDirection == Vector2.down) {
+
+					}
+
+				} else {
+
+				}
+			} else if (GameInputManager.inputType == InputType.AttackWeak) {
+				Debug.Log ("Attack Weak pressed");
+				GameInputManager.inputType = InputType.None;
+			} else if (GameInputManager.inputType == InputType.AttackTap) {
+				Debug.Log ("Attack Tap pressed");
+				GameInputManager.inputType = InputType.None;
 			}
 
 			//Update Jumping
 			if (GameInputManager.inputType == InputType.JumpTap) {
 				Debug.Log ("JumpTap pressed");
 				GameInputManager.inputType = InputType.None;
-				isBusy = true;
-				busyDuration = 0.1f;
 				if (isGrounded) { //Single Jump
 					anim.SetTrigger ("Jump");
 					isGrounded = false;
@@ -166,8 +180,6 @@ public class FighterController : NetworkBehaviour, Fighter {
 			} else if (GameInputManager.inputType == InputType.JumpHold) {
 				Debug.Log ("JumpHold pressed");
 				GameInputManager.inputType = InputType.None;
-				isBusy = true;
-				busyDuration = 0.1f;
 				if (isGrounded) { //Single Jump
 					anim.SetTrigger ("Jump");
 					isGrounded = false;
@@ -220,8 +232,6 @@ public class FighterController : NetworkBehaviour, Fighter {
 				if (isConnected) {
 					if (!isGrounded) {
 						anim.SetTrigger ("Land");
-						isBusy = true;
-						busyDuration = 0.2f;
 					}
 					isGrounded = true;
 					isFalling = false;
@@ -238,28 +248,26 @@ public class FighterController : NetworkBehaviour, Fighter {
 		}
 	}
 
-	void OnTriggerEnter2D (Collider2D col) {
-		if (col.gameObject.tag == "BlastZone") {
-			Debug.Log (playerName + " entered the battlefield");
-			isDead = false;
-		}
-		if (col.gameObject.tag == "Fighter") {
-			Debug.Log ("Hit " + col.gameObject.name + "!");
-			col.gameObject.GetComponent<FighterController> ().isHitStunned = true;
-		}
-	}
-
-	void OnTriggerExit2D (Collider2D col) {
-		if (col.gameObject.name == "BlastZone") {
-			Debug.Log (playerName + " left the zone!");
-			isDead = true;
-			logic.OnPlayerDeath (this.gameObject);
-		}
-	}
-
 	void OnApplicationQuit() {
 		PlayerContainer.Remove (player);
 		Debug.Log (player.ToString () + " left the game.");
+	}
+
+	void Flip() {
+		if (isFacingRight) {
+			transform.rotation = Quaternion.Euler (Vector3.zero);
+		} else {
+			transform.rotation = Quaternion.Euler (Vector3.down * 180f);
+		}
+	}
+
+	public void Die() {
+		isDead = true;
+		logic.OnPlayerDeath (this.gameObject);
+	}
+
+	public void Revive() {
+		isDead = false;
 	}
 
 	public string getName() {

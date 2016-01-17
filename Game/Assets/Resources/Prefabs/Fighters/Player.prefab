@@ -13,9 +13,9 @@ GameObject:
   - 114: {fileID: 11431916}
   - 114: {fileID: 11498200}
   - 50: {fileID: 5028146}
-  - 61: {fileID: 6194786}
   - 95: {fileID: 9536192}
   - 114: {fileID: 11414518}
+  - 114: {fileID: 11498312}
   m_Layer: 0
   m_Name: Player
   m_TagString: Fighter
@@ -23,6 +23,52 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &151764
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 443932}
+  - 61: {fileID: 6189872}
+  - 114: {fileID: 11442620}
+  m_Layer: 0
+  m_Name: HurtBox
+  m_TagString: Fighter
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &181262
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 420792}
+  - 212: {fileID: 21213362}
+  - 60: {fileID: 6096308}
+  m_Layer: 0
+  m_Name: mario_167
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &420792
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 181262}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.35899997, y: 0.343, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 423564}
+  m_RootOrder: 1
 --- !u!4 &423564
 Transform:
   m_ObjectHideFlags: 1
@@ -30,10 +76,24 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 144222}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.956, y: -0.406, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 443932}
+  - {fileID: 420792}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+--- !u!4 &443932
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 151764}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 423564}
   m_RootOrder: 0
 --- !u!50 &5028146
 Rigidbody2D:
@@ -52,12 +112,34 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!61 &6194786
+--- !u!60 &6096308
+PolygonCollider2D:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 181262}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_Offset: {x: 0, y: 0}
+  m_Points:
+    m_Paths:
+    - - {x: 0.043667316, y: 0.2409175}
+      - {x: 0.021178484, y: 0.17167068}
+      - {x: 0.01625514, y: 0.12742308}
+      - {x: 0.047130466, y: 0.07656938}
+      - {x: 0.09820676, y: 0.04312118}
+      - {x: 0.19743872, y: 0.09553264}
+      - {x: 0.22316808, y: 0.20041808}
+      - {x: 0.13238502, y: 0.25892812}
+--- !u!61 &6189872
 BoxCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 144222}
+  m_GameObject: {fileID: 151764}
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
@@ -95,7 +177,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Animator: {fileID: 9536192}
-  m_ParameterSendBits: 127
+  m_ParameterSendBits: 511
   param0: 
   param1: 
   param2: 
@@ -122,7 +204,6 @@ MonoBehaviour:
   isDashing: 0
   isHitStunned: 0
   isBusy: 0
-  busyDuration: 0
   isJumping: 0
   isDoubleJumping: 0
   isGrounded: 0
@@ -138,12 +219,23 @@ MonoBehaviour:
   jumpImpulse: 5
   doubleJumpImpulse: 5
   weight: 1
-  hurtBox: {fileID: 6194786}
+  hurtBox: {fileID: 6189872}
   velocity: {x: 0, y: 0}
   isConnected: 0
   layerMask:
     serializedVersion: 2
     m_Bits: 256
+--- !u!114 &11442620
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 151764}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7981424ae25dd4ccda2ce6289f08d4f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11496440
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -196,6 +288,48 @@ MonoBehaviour:
   m_SnapThreshold: 5
   m_InterpolateRotation: 1
   m_InterpolateMovement: 1
+--- !u!114 &11498312
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 144222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14b8b9758d5d14f8bbcb3eb695a47fb3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  frame1: {fileID: 6096308}
+--- !u!212 &21213362
+SpriteRenderer:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 181262}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_Materials:
+  - {fileID: 10754, guid: 0000000000000000e000000000000000, type: 0}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_ReflectionProbeUsage: 0
+  m_ProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_Sprite: {fileID: 21300210, guid: b62955136611c4b27b8c226d8eafbc8b, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_FlipX: 0
+  m_FlipY: 0
 --- !u!212 &21258156
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -222,7 +356,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 796999559
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300072, guid: b62955136611c4b27b8c226d8eafbc8b, type: 3}
+  m_Sprite: {fileID: 21300036, guid: b62955136611c4b27b8c226d8eafbc8b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -265,7 +399,7 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: hurtBox
       value: 
-      objectReference: {fileID: 6194786}
+      objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_Enabled
       value: 1

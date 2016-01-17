@@ -20,6 +20,17 @@ public class GameInputManager : MonoBehaviour {
 	public float joystickHoldTime;
 	public Vector2 joystickInitialPosition;
 
+	public bool attackInput;
+	public float attackTapTime;
+	public float attackHoldTime;
+	public Vector2 attackInitialPosition;
+	public Vector2 attackFinalPosition;
+
+	public bool guardInput;
+	public float guardTapTime;
+	public float guardHoldTime;
+	public Vector2 guardInitialPosition;
+
 	public bool jumpInput;
 	public float jumpTapTime;
 	public float jumpHoldTime;
@@ -80,7 +91,45 @@ public class GameInputManager : MonoBehaviour {
 	}
 
 	void AttackButtonProcess() {
-
+		if (isAttackButtonPressed && !attackInput) {
+			attackInput = true;
+			attackInitialPosition = AttackButton.position;
+		}
+		if ((!isAttackButtonPressed && attackInput) || attackHoldTime > attackTapTime) {
+			attackInput = false;
+			Vector2 delta;
+			float angle; 
+			if (attackFinalPosition.magnitude > 0.9f) {
+				delta = attackFinalPosition;
+				angle = Vector2.Angle (Vector2.up, attackFinalPosition);
+			} else {
+				delta = attackFinalPosition - attackInitialPosition;
+				angle = Vector2.Angle (Vector2.up, delta);
+			}
+			if (angle < 45) { //Up attack
+				inputDirection = Vector2.up;
+			} else if (angle < 135) { //Side attack
+				if (delta.x > 0) {
+					inputDirection = Vector2.right;
+				} else {
+					inputDirection = Vector2.left;
+				}
+			} else { //Down attack
+				inputDirection = Vector2.down;
+			}
+			if (delta.magnitude > 0.7f) {
+				inputType = InputType.AttackStrong;
+			} else if (delta.magnitude > 0.3f) {
+				inputType = InputType.AttackWeak;
+			} else {
+				inputType = InputType.AttackTap;
+			}
+			attackHoldTime = 0f;
+		}
+		if (attackInput) {
+			attackHoldTime += Time.deltaTime;
+			attackFinalPosition = AttackButton.position;
+		}
 	}
 
 	void GuardButtonProcess() {
