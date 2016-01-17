@@ -3,6 +3,9 @@ using System.Collections;
 
 public class MarioSideSmash : MonoBehaviour {
 
+	public float baseKnockback = 1f;
+	public float knockbackGrowth = 0.1f;
+
 	// Set these in the editor
 	public PolygonCollider2D frame1;
 
@@ -33,7 +36,17 @@ public class MarioSideSmash : MonoBehaviour {
 	void OnTriggerEnter2D(Collider2D col)
 	{
 		if (col.gameObject.tag == "HurtBox") {
+			Fighter player = GetComponent<Fighter> ();
+			HitController target = col.gameObject.GetComponent<HitController> ();
 			Debug.Log ("Hit " + col.gameObject.GetComponentInParent<Fighter>().getName() + "!");
+			float percentage = target.GetPercentage ();
+			target.TakeDamage (15f);
+			target.HitStun (0.5f);
+			if (player.facingRight ()) {
+				target.Launch (new Vector2 (1, 1), baseKnockback + knockbackGrowth * percentage);
+			} else {
+				target.Launch (new Vector2 (-1, 1), baseKnockback + knockbackGrowth * percentage);
+			}
 		}
 	}
 

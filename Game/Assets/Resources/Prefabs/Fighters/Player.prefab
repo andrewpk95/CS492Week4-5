@@ -35,7 +35,7 @@ GameObject:
   - 114: {fileID: 11442620}
   m_Layer: 0
   m_Name: HurtBox
-  m_TagString: Fighter
+  m_TagString: HurtBox
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -203,6 +203,7 @@ MonoBehaviour:
   isWalking: 0
   isDashing: 0
   isHitStunned: 0
+  hitStunDuration: 0
   isBusy: 0
   isJumping: 0
   isDoubleJumping: 0
@@ -221,6 +222,7 @@ MonoBehaviour:
   weight: 1
   hurtBox: {fileID: 6189872}
   velocity: {x: 0, y: 0}
+  newVelocity: {x: 0, y: 0}
   isConnected: 0
   layerMask:
     serializedVersion: 2
@@ -236,6 +238,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7981424ae25dd4ccda2ce6289f08d4f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  percentage: 0
 --- !u!114 &11496440
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -299,6 +302,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14b8b9758d5d14f8bbcb3eb695a47fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseKnockback: 1
+  knockbackGrowth: 0.1
   frame1: {fileID: 6096308}
 --- !u!212 &21213362
 SpriteRenderer:

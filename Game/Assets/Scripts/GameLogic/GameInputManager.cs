@@ -30,6 +30,7 @@ public class GameInputManager : MonoBehaviour {
 	public float guardTapTime;
 	public float guardHoldTime;
 	public Vector2 guardInitialPosition;
+	public Vector2 guardFinalPosition;
 
 	public bool jumpInput;
 	public float jumpTapTime;
@@ -133,6 +134,50 @@ public class GameInputManager : MonoBehaviour {
 	}
 
 	void GuardButtonProcess() {
+		if (isGuardButtonPressed && !guardInput) {
+			guardInput = true;
+			guardInitialPosition = GuardButton.position;
+		}
+		if (guardInput) {
+			inputType = InputType.Guard;
+		}
+		if ((!isGuardButtonPressed && guardInput) || (guardFinalPosition - guardInitialPosition).magnitude > 0.5f || guardFinalPosition.magnitude > 0.9f) {
+			Vector2 delta;
+			float angle; 
+			if (guardFinalPosition.magnitude > 0.9f) {
+				delta = guardFinalPosition;
+				angle = Vector2.Angle (Vector2.up, guardFinalPosition);
+			} else {
+				delta = guardFinalPosition - guardInitialPosition;
+				angle = Vector2.Angle (Vector2.up, delta);
+			}
+			if (angle < 45) { //Side Dodge
+				inputDirection = Vector2.up;
+			} else if (angle < 135) { //Roll
+				if (delta.x > 0) {
+					inputDirection = Vector2.right;
+				} else {
+					inputDirection = Vector2.left;
+				}
+			} else { //Side Dodge
+				inputDirection = Vector2.down;
+			}
+			if (delta.magnitude > 0.5f) {
+				inputType = InputType.Roll;
+			} else {
+				inputType = InputType.Guard;
+			}
+			guardHoldTime = 0f;
+		}
+		if (!isGuardButtonPressed) {
+			guardInput = false;
+			guardInitialPosition = Vector2.zero;
+			guardFinalPosition = Vector2.zero;
+		}
+		if (guardInput) {
+			guardHoldTime += Time.deltaTime;
+			guardFinalPosition = GuardButton.position;
+		}
 
 	}
 
@@ -140,7 +185,7 @@ public class GameInputManager : MonoBehaviour {
 		if (isJumpButtonPressed && !jumpInput) {
 			jumpInput = true;
 		}
-		if (!isJumpButtonPressed && jumpInput || jumpHoldTime > jumpTapTime) {
+		if ((!isJumpButtonPressed && jumpInput) || jumpHoldTime > jumpTapTime) {
 			jumpInput = false;
 			if (jumpHoldTime > jumpTapTime) {
 				inputType = InputType.JumpHold;

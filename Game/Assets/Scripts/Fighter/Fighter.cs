@@ -1,6 +1,11 @@
 ﻿using System;
+using UnityEngine;
 
 public interface Fighter {
+
+	void HitStun(float duration);
+
+	void Launch(Vector2 direction, float strength);
 
 	void Die();
 
@@ -9,6 +14,8 @@ public interface Fighter {
 	string getName();
 
 	void setName(string name);
+
+	bool facingRight ();
 
 }
 
