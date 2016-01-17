@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ListFragment">
+
+    <Button
+        android:id="@+id/send_img_to_server"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select Image"
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/upload_img"
+        android:layout_alignStart="@+id/upload_img" />
+
+    <ImageView
+        android:layout_height="400px"
+        android:layout_width="400px"
+        android:layout_gravity="center"
+        android:id="@+id/show_img"
+        android:layout_below="@+id/send_img_to_server"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Upload Image"
+        android:id="@+id/upload_img"
+        android:layout_below="@+id/show_img"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

@@ -39,9 +39,7 @@ import io.socket.emitter.Emitter;
  * Created by Junhong on 2016-01-14.
  */
 public class ChatFragment extends Fragment {
-    private static final int REQUEST_LOGIN = 0;
 
-    private static final int TYPING_TIMER_LENGTH = 600;
 
     private RecyclerView mMessagesView;
     private EditText mInputMessageView;
@@ -73,7 +71,6 @@ public class ChatFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setHasOptionsMenu(true);
 
         mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
@@ -97,7 +94,6 @@ public class ChatFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.i(TAG, "destory the activity?");
         mSocket.disconnect();
         mSocket.off(Socket.EVENT_CONNECT_ERROR, onConnectError);
         mSocket.off(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
@@ -143,7 +139,7 @@ public class ChatFragment extends Fragment {
                 }
 
                 mTypingHandler.removeCallbacks(onTypingTimeout);
-                mTypingHandler.postDelayed(onTypingTimeout, TYPING_TIMER_LENGTH);
+                mTypingHandler.postDelayed(onTypingTimeout, Constants.TYPING_TIMER_LENGTH);
             }
 
             @Override
@@ -162,18 +158,22 @@ public class ChatFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.i(TAG, "onActivityResult super");
         super.onActivityResult(requestCode, resultCode, data);
-        Log.i(TAG, "onActivityResult");
+
         if (Activity.RESULT_OK != resultCode) {
             getActivity().finish();
             return;
         }
-        Log.i(TAG, "onActivityResult 뭐하냐?");
+
         mUsername = data.getStringExtra("username");
         mPosition = data.getStringExtra("position");
         int numUsers = data.getIntExtra("numUsers", 1);
-        Log.i(TAG, "mUsername " + mUsername + " mPosition : " + mPosition);
+
+        //return if there's no username and position number to broadcast
+        if(mUsername == null && mPosition == null){
+            return;
+        }
+
         addLog(getResources().getString(R.string.message_welcome));
         addParticipantsLog(numUsers);
     }
@@ -186,7 +186,6 @@ public class ChatFragment extends Fragment {
     @Override
     public void onPause(){
         super.onPause();
-        Log.i(TAG, "onPause 중단시키기");
     }
 
     @Override
@@ -247,12 +246,8 @@ public class ChatFragment extends Fragment {
     }
 
     private void attemptSend() {
-        Log.i(TAG, "mUsername is null");
         if (null == mUsername) return;
-        Log.i(TAG, "socket is connected()?");
         if (!mSocket.connected()) return;
-        Log.i(TAG, "socket is connected()? 237");
-        Log.i(TAG, "249 attemptSend()");
         mTyping = false;
 
         String message = mInputMessageView.getText().toString().trim();
@@ -260,20 +255,17 @@ public class ChatFragment extends Fragment {
             mInputMessageView.requestFocus();
             return;
         }
-        Log.i(TAG, "257 attemptSend()");
         mInputMessageView.setText("");
         addMessage(mUsername, message);
 
         // perform the sending message attempt.
         mSocket.emit("new message", message);
-        Log.i(TAG, "263 attemptSend()");
     }
 
     private void startSignIn() {
         mUsername = null;
         Intent intent = new Intent(getActivity(), LoginActivity.class);
-        Log.i(TAG, "어디로 결과를 보내니? : " + getActivity().toString());
-        startActivityForResult(intent, REQUEST_LOGIN);
+        startActivityForResult(intent, Constants.REQUEST_LOGIN);
     }
 
     private void leave() {

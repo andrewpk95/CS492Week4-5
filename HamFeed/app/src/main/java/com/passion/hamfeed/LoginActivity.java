@@ -116,13 +116,11 @@ public class LoginActivity extends Activity {
             } catch (JSONException e) {
                 return;
             }
-            Log.i(TAG, "really 받음? " + numUsers);
             Intent intent = new Intent();
             intent.putExtra("username", mUsername);
             intent.putExtra("position", mPosition);
             setResult(RESULT_OK, intent);
             finish();
-            Log.i(TAG, "끝냄");
         }
     };
 }
