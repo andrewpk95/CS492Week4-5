@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/listImg"
+        android:id="@+id/icon"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_alignParentLeft="true"
@@ -16,23 +16,23 @@
         />
 
     <TextView
-        android:id="@+id/listTitle"
+        android:id="@+id/user"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/listImg"
-        android:layout_toRightOf="@+id/listImg"
+        android:layout_alignTop="@+id/icon"
+        android:layout_toRightOf="@+id/icon"
         android:text="A List item title"
         android:textSize="16sp"
         android:textStyle="bold"/>
 
     <TextView
-        android:id="@+id/listDescription"
+        android:id="@+id/timestamp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/listTitle"
+        android:layout_below="@+id/user"
         android:layout_marginTop="5dp"
         android:maxLines="4"
-        android:layout_toRightOf="@+id/listImg"
+        android:layout_toRightOf="@+id/icon"
         android:text="The List item description"
         android:textSize="14sp"/>
 

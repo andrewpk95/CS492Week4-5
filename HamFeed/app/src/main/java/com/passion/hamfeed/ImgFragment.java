@@ -3,19 +3,24 @@ package com.passion.hamfeed;
 import android.app.Activity;
 
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.CursorLoader;
+import android.support.v7.widget.RecyclerView;
 import android.text.format.Time;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -30,15 +35,26 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.ref.WeakReference;
+import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.SimpleTimeZone;
 import java.util.concurrent.Future;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
+
+import static com.passion.hamfeed.MessageAdapter.*;
 
 /**
  * Created by Junhong on 2016-01-17.
@@ -65,6 +81,7 @@ public class ImgFragment extends Fragment {
     private final String imgUpload = "image";
     private final String imgFeed = "imageresponse";
     private ListItem[] listItems;
+    private String[] img_html_urls;
     private LoadImgTask feedlv;
 
     @Override
@@ -74,7 +91,6 @@ public class ImgFragment extends Fragment {
         Ion.getDefault(getActivity()).configure().setLogging("ion-sample", Log.DEBUG);
 
         mSocket.on(imgFeed, onImage);
-        feedlv = new LoadImgTask();
     }
 
     @Override
@@ -152,6 +168,8 @@ public class ImgFragment extends Fragment {
         show_img = (ImageView)view.findViewById(R.id.show_img);
 
         lv = (ListView)view.findViewById(R.id.img_list);
+//        ArrayList<ListItem> srcList = new ArrayList<ListItem>(Arrays.asList(listItems));
+//        lv.setAdapter(new CustomListAdapter(getContext(), srcList));
     }
 
     @Override
@@ -213,13 +231,17 @@ public class ImgFragment extends Fragment {
             JSONArray data_arr = (JSONArray)args[0];
 
             listItems = new ListItem[data_arr.length()];
+            img_html_urls = new String[data_arr.length()];
 
             for(int i = 0; i < data_arr.length(); i++){
                 try {
                     listItems[i] = new ListItem();
+                    img_html_urls[i] = new String();
+
                     JSONObject json = data_arr.getJSONObject(i);
                     listItems[i].setAuthor(json.getString("username"));
                     listItems[i].setImg_url(json.getString("html_addr"));
+                    img_html_urls[i] = json.getString("html_addr");
                     listItems[i].setTimestamp(json.getString("time"));
 
 //                    Log.i(TAG, i + " th " + listItems[i].getAuthor() + " " + listItems[i].getImg_url() +
@@ -229,10 +251,25 @@ public class ImgFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
+
+            //call handler to invoke the listview
         }
     };
 
-    public class LoadImgTask extends AsyncTask<Void, Void, Void>{
+    public class LoadImgTask extends AsyncTask<String, Void, Bitmap>{
+        private final WeakReference<ImageView> imageViewWeakReference;
+        private String imageUrl;
+
+        public LoadImgTask(ImageView imageView) {
+            imageViewWeakReference = new WeakReference<ImageView>(imageView);
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            imageUrl = params[0];
+            return LoadImage(imageUrl);
+        }
+
         @Override
         protected void onPreExecute(){
             super.onPreExecute();
@@ -251,13 +288,84 @@ public class ImgFragment extends Fragment {
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
-            return null;
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+            if(imageViewWeakReference != null && bitmap != null){
+                final ImageView imageView = imageViewWeakReference.get();
+                if(imageView != null){
+                    imageView.setImageBitmap(bitmap);
+                }
+            }
+        }
+
+        private Bitmap LoadImage(String URL){
+            Bitmap bitmap = null;
+            InputStream in = null;
+
+            try{
+                in = OpenHttpConnection(URL);
+                bitmap = BitmapFactory.decodeStream(in);
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return bitmap;
+        }
+
+        private InputStream OpenHttpConnection(String strURL) throws IOException{
+            InputStream inputStream = null;
+            URL url = new URL(strURL);
+            URLConnection conn = url.openConnection();
+
+            try{
+                HttpURLConnection httpConn = (HttpURLConnection)conn;
+                httpConn.setRequestMethod("GET");
+                httpConn.connect();
+
+                if(httpConn.getResponseCode() == HttpURLConnection.HTTP_OK){
+                    inputStream = httpConn.getInputStream();
+                }
+            } catch(Exception e){
+                e.printStackTrace();
+            }
+
+            return inputStream;
+        }
+    }
+
+    public class CustomListAdapter extends BaseAdapter{
+        private ArrayList<ListItem> listData;
+        private LayoutInflater layoutInflater;
+
+        public CustomListAdapter(Context context, ArrayList<ListItem> listData){
+            this.listData = listData;
+            layoutInflater = LayoutInflater.from(context);
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+        public int getCount() {
+            return listData.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return listData.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View rowView = layoutInflater.inflate(R.layout.item_list, parent, false);
+            ImageView icon = (ImageView)rowView.findViewById(R.id.icon);
+
+            if(icon != null){
+                new LoadImgTask(icon).execute(listData.get(position).getImg_url());
+            }
+            return rowView;
         }
     }
 }
