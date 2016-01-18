@@ -32,4 +32,11 @@
         android:layout_below="@+id/show_img"
         android:layout_centerHorizontal="true" />
 
+    <ListView
+        android:id="@+id/img_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/upload_img">
+    </ListView>
+
 </RelativeLayout>
