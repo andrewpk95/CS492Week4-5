@@ -31,6 +31,7 @@ server.listen(port, function () {
 // Chatroom
 var numUsers = 0;
 
+// When the client upload the img file port
 app.listen(port_img, function(){
   console.log('Server listeneing at port %d', port_img);
   console.log('Server numUsers ', numUsers);
@@ -112,8 +113,9 @@ io.on('connection', function(socket) {
 
 
     socket.emit('login', {
-      numUsers: 0 
+      numUsers: numUsers 
     });
+
     // echo globally (all clients) that a person has connected
     socket.broadcast.to(socket.position).emit('user joined', {
       username: socket.username,
@@ -139,16 +141,28 @@ io.on('connection', function(socket) {
   socket.on('disconnect', function () {
     if (addedUser) {
       --numUsers;
-//      var num = oMap.get(socket.position);
-//      oMap.remove(socket.position);
-//      oMap.put (socket.position, --num);
       socket.leave(socket.position);
 
       // echo globally that this client has left
       socket.broadcast.to(socket.position).emit('user left', {
         username: socket.username,
-        //numUsers: oMap.get(socket.position)
       });
     }
   });
+
+  //when the user upload the image to the server
+  socket.on('image', function (data){
+    console.log('\timage ', data);
+    MongoClient.connect(url, function (err, db){
+	    db.collection("HamImageInformation").insertOne(data);
+      if(err){
+        console.log('Error: ', err);
+      }
+      else {
+        console.log('\tsave');
+      }
+      db.close();
+    });
+  });
+    
 });
