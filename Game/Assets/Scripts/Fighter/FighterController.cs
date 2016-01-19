@@ -7,6 +7,7 @@ public class FighterController : NetworkBehaviour, Fighter {
 	public const float GRAVITY = 0.3f;
 
 	//Basic information
+	public bool isDummy;
 	Rigidbody2D rb;
 	public Player player;
 	public GameLogic logic;
@@ -41,7 +42,7 @@ public class FighterController : NetworkBehaviour, Fighter {
 
 	//Current Attributes
 	public BoxCollider2D hurtBox;
-	public Vector2 velocity;
+	[SyncVar] public Vector2 velocity;
 	public Vector2 newVelocity;
 
 	//Variables for detecting ground collision
@@ -49,7 +50,8 @@ public class FighterController : NetworkBehaviour, Fighter {
 	int numVerticalRays = 3;
 	float margin = 0.02f;
 	public bool isConnected;
-	public LayerMask layerMask;
+	public LayerMask mapLayerMask;
+	public LayerMask playerLayerMask;
 
 	// Use this for initialization
 	void Start () {
@@ -72,11 +74,14 @@ public class FighterController : NetworkBehaviour, Fighter {
 	
 	// Update is called once per frame
 	void FixedUpdate () {
-		if (!isLocalPlayer)
-			return;
+		if (!isDummy) {
+			if (!isLocalPlayer)
+				return;
+		}
 		rectBox = new Rect (hurtBox.bounds.min.x, hurtBox.bounds.min.y, hurtBox.bounds.size.x, hurtBox.bounds.size.y);
 		isBusy = anim.GetBool ("isBusy");
-		UpdateControl ();
+		if (!isDummy)
+			UpdateControl ();
 		UpdatePhysics ();
 		rb.velocity = velocity;
 		Flip ();
@@ -98,71 +103,21 @@ public class FighterController : NetworkBehaviour, Fighter {
 
 	void UpdateJoystick() {
 		//Update Movement by Joystick
-		newVelocity.x = velocity.x;
 		if (isGrounded) { //If it is on ground...
-			isWalking = GameInputManager.isWalk;
-			isDashing = GameInputManager.isDash;
-			if (GameInputManager.isWalk) {
-				Walk ();
-			} else if (GameInputManager.isDash) {
-				Dash ();
+			if (isHitStunned) {
+
 			} else {
-				anim.SetTrigger ("Idle");
-				Stop ();
-			}
-			if (velocity.x > 0) {
-				isFacingRight = true;
-			}
-			if (velocity.x < 0) {
-				isFacingRight = false;
+				isWalking = GameInputManager.isWalk;
+				isDashing = GameInputManager.isDash;
 			}
 		} else { //If it is in air...
-			if (GameInputManager.isWalk || GameInputManager.isDash) {
-				AirMove ();
-			} else {
-				//No input deceleration
-				Stop ();
-			}
-		}
-		velocity.x = newVelocity.x;
-	}
-
-	void Walk() {
-		anim.SetTrigger ("Walk");
-		newVelocity.x += acceleration * GameInputManager.JoystickPosition.x;
-		float clampWalkSpeed = walkSpeed * Mathf.Abs (GameInputManager.JoystickPosition.x);
-		newVelocity.x = Mathf.Clamp (newVelocity.x, -clampWalkSpeed, clampWalkSpeed);
-		anim.SetFloat("WalkSpeed", Mathf.Abs (GameInputManager.JoystickPosition.x));
-	}
-
-	void Dash() {
-		anim.SetTrigger ("Dash");
-		int modifier = GameInputManager.JoystickPosition.x > 0 ? 1 : -1;
-		if ((modifier > 0 && velocity.x < 0) || (modifier < 0 && velocity.x > 0)) {
-			newVelocity.x += deceleration * modifier;
-		} else {
-			newVelocity.x = dashSpeed * modifier;
-		}
-	}
-
-	void AirMove() {
-		newVelocity.x += acceleration * GameInputManager.JoystickPosition.x;
-		float clampAirSpeed = airSpeed * Mathf.Abs (GameInputManager.JoystickPosition.x);
-		newVelocity.x = Mathf.Clamp (newVelocity.x, -clampAirSpeed, clampAirSpeed);
-	}
-
-	void Stop() {
-		//No input deceleration
-		int modifier = velocity.x > 0 ? -1 : 1;
-		if (Mathf.Abs (newVelocity.x) > deceleration) {
-			newVelocity.x += deceleration * modifier;
-		} else {
-			newVelocity.x = 0f;
+			
 		}
 	}
 
 	void UpdateAttack() {
 		//Update Attack input
+		anim.SetTrigger("Attack");
 		if (isGrounded) { //Ground Moves
 			if (GameInputManager.inputType == InputType.AttackStrong) { //Smash Attacks
 				GameInputManager.inputType = InputType.None;
@@ -339,14 +294,17 @@ public class FighterController : NetworkBehaviour, Fighter {
 		if (isGrounded) { //Single Jump
 			Debug.Log (playerName + "'s Jump!");
 			anim.SetTrigger ("Jump");
+			anim.SetTrigger ("SingleJump");
 			isGrounded = false;
 			isJumping = true;
-			velocity = new Vector2 (velocity.x, jumpImpulse);
+			isFalling = false;
+			velocity.y = jumpImpulse;
 		} else if (!isDoubleJumping) { //Double Jump
 			Debug.Log (playerName + "'s Double Jump!");
 			anim.SetTrigger ("DoubleJump");
-			velocity = new Vector2 (velocity.x, doubleJumpImpulse);
 			isDoubleJumping = true;
+			isFalling = false;
+			velocity.y = doubleJumpImpulse;
 		}
 	}
 
@@ -355,19 +313,52 @@ public class FighterController : NetworkBehaviour, Fighter {
 	}
 
 	void UpdatePhysics() {
+		newVelocity = velocity;
 		//Apply Horizontal Movement
-		if (isGrounded) { //On Ground
+		if (isGrounded) { //On Ground...
+			if (!isHitStunned) {
+				if (isWalking) {
+					Walk ();
+				} else if (isDashing) {
+					Dash ();
+				} else {
+					anim.SetTrigger ("Idle");
+					Stop ();
+				}
+				if (velocity.x > 0) {
+					isFacingRight = true;
+				}
+				if (velocity.x < 0) {
+					isFacingRight = false;
+				}
+			} else {
+				Stop ();
+			}
+		} else { //If it is in air...
+			if (!isHitStunned) {
+				if (isWalking || isDashing) {
+					AirMove ();
+				} else {
+					Stop ();
+				}
+			} else {
 
-		} else {
-			
+			}
+		}
+		if (newVelocity.x != 0f) {
+			Vector2 startPoint = new Vector2 (rectBox.center.x, rectBox.yMin + margin);
+			Vector2 endPoint = new Vector2 (rectBox.center.x, rectBox.yMax - margin);
+			RaycastHit2D hitInfo;
+			float rayDistance = rectBox.width / 2 + Mathf.Abs (newVelocity.x * Time.fixedDeltaTime);
+
 		}
 
 		//Apply Gravity
 		if (!isGrounded) {
 			if (isSpiked) {
-				velocity = new Vector2 (velocity.x, velocity.y);
+				newVelocity.y = velocity.y;
 			} else {
-				velocity = new Vector2 (velocity.x, Mathf.Max (velocity.y - GRAVITY, -fallSpeed));
+				newVelocity.y = Mathf.Max (velocity.y - GRAVITY, -fallSpeed);
 			}
 		}
 		//Checking isFalling and isGrounded
@@ -377,34 +368,66 @@ public class FighterController : NetworkBehaviour, Fighter {
 		if (isGrounded || isFalling) {
 			Vector2 startPoint = new Vector2 (rectBox.xMin + margin, rectBox.center.y);
 			Vector2 endPoint = new Vector2 (rectBox.xMax - margin, rectBox.center.y);
-			Debug.DrawLine (new Vector3 (startPoint.x, startPoint.y, 0), new Vector3 (endPoint.x, endPoint.y, 0), Color.black);
-			Debug.DrawLine (new Vector3 (rectBox.min.x, rectBox.min.y, 0), new Vector3 (rectBox.max.x, rectBox.min.y, 0), Color.black);
 			RaycastHit2D hitInfo;
-			float rayDistance = rectBox.height / 2 + (isGrounded ? 0.1f : Mathf.Abs (velocity.y * Time.deltaTime));
+			float rayDistance = rectBox.height / 2 + (isGrounded ? 0.1f : Mathf.Abs (velocity.y * Time.fixedDeltaTime));
 			isConnected = false;
 
 			for (int i = 0; i < numVerticalRays; i++) {
 				float lerpAmount = (float)i / (float) (numVerticalRays - 1);
 				Vector2 origin = Vector2.Lerp (startPoint, endPoint, lerpAmount);
 				Debug.DrawLine (new Vector3 (origin.x, origin.y, 0), new Vector3 (origin.x, origin.y - rayDistance, 0), Color.red);
-				hitInfo = Physics2D.Raycast (origin, Vector2.down, rayDistance, layerMask);
+				hitInfo = Physics2D.Raycast (origin, Vector2.down, rayDistance, mapLayerMask);
 				isConnected = hitInfo.collider != null;
 				if (isConnected) {
-					if (!isGrounded) {
-						anim.SetTrigger ("Land");
-					}
 					isGrounded = true;
 					isFalling = false;
 					isJumping = false;
 					isDoubleJumping = false;
 					transform.Translate (Vector3.down * (hitInfo.distance - rectBox.height / 2));
-					velocity = new Vector2 (velocity.x, 0);
+					newVelocity.y = 0;
 					break;
 				}
 			}
 			if (!isConnected) {
 				isGrounded = false;
 			}
+		}
+		anim.SetBool ("isFalling", isFalling);
+		//Apply New Velocity
+		velocity = newVelocity;
+	}
+
+	void Walk() {
+		anim.SetTrigger ("Walk");
+		newVelocity.x += acceleration * GameInputManager.JoystickPosition.x;
+		float clampWalkSpeed = walkSpeed * Mathf.Abs (GameInputManager.JoystickPosition.x);
+		newVelocity.x = Mathf.Clamp (newVelocity.x, -clampWalkSpeed, clampWalkSpeed);
+		anim.SetFloat("WalkSpeed", Mathf.Abs (GameInputManager.JoystickPosition.x));
+	}
+
+	void Dash() {
+		anim.SetTrigger ("Dash");
+		int modifier = GameInputManager.JoystickPosition.x > 0 ? 1 : -1;
+		if ((modifier > 0 && velocity.x < 0) || (modifier < 0 && velocity.x > 0)) {
+			newVelocity.x += deceleration * modifier;
+		} else {
+			newVelocity.x = dashSpeed * modifier;
+		}
+	}
+
+	void AirMove() {
+		newVelocity.x += acceleration * GameInputManager.JoystickPosition.x;
+		float clampAirSpeed = airSpeed * Mathf.Abs (GameInputManager.JoystickPosition.x);
+		newVelocity.x = Mathf.Clamp (newVelocity.x, -clampAirSpeed, clampAirSpeed);
+	}
+
+	void Stop() {
+		//No input deceleration
+		int modifier = velocity.x > 0 ? -1 : 1;
+		if (Mathf.Abs (newVelocity.x) > deceleration) {
+			newVelocity.x += deceleration * modifier;
+		} else {
+			newVelocity.x = 0f;
 		}
 	}
 
@@ -428,7 +451,11 @@ public class FighterController : NetworkBehaviour, Fighter {
 
 	public void Launch(Vector2 direction, float strength) {
 		Vector2 dir = direction.normalized;
+		isGrounded = false;
 		velocity = dir * strength;
+		if (velocity.y < 1f) {
+			velocity.y = 0f;
+		}
 	}
 
 	public void Die() {
@@ -438,6 +465,13 @@ public class FighterController : NetworkBehaviour, Fighter {
 
 	public void Revive() {
 		isDead = false;
+		isHitStunned = false;
+		isFacingRight = true;
+		isSpiked = false;
+		isWalking = false;
+		isDashing = false;
+		velocity = Vector2.zero;
+		newVelocity = Vector2.zero;
 	}
 
 	public string getName() {

@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
+using UnityEngine.Networking;
 using System.Collections;
 
-public class HitController : MonoBehaviour {
+public class HitController : NetworkBehaviour {
 
 	//Attributes
+	[SyncVar]
 	public float percentage;
 
 	//Components
@@ -25,6 +27,7 @@ public class HitController : MonoBehaviour {
 		if (col.gameObject.tag == "BlastZone") {
 			Debug.Log (fighter.getName () + " left the zone!");
 			fighter.Die ();
+			Reset ();
 		}
 	}
 

@@ -38,7 +38,7 @@ public class TimedGameLogic : MonoBehaviour, GameLogic {
 	}
 
 	public IEnumerator Respawn(GameObject player) {
-		
+		player.GetComponent<Fighter> ().Revive ();
 		player.SetActive (false);
 		yield return new WaitForSeconds (RESPAWN_TIME);
 		player.transform.position = SPAWN_POSITION;

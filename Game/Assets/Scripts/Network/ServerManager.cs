@@ -50,7 +50,7 @@ public class ServerManager : MonoBehaviour {
 		string data = socketEvent.data.ToString ();
 		Debug.Log ("Response from server: " + data);
 		StopCoroutine ("ConnectionTest");
-
+		socket.Off ("ConnectionTest", NetTest);
 		//Enable Game Logic in the Scene. 
 		//GameObject go = GameObject.FindGameObjectWithTag ("GameController");
 		//gameManager = go.GetComponent<GameManager> ();
