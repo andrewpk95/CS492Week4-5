@@ -56,7 +56,7 @@ public class GameInputManager : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate () {
 		JoystickPosition = Joystick.position;
 		isJoystickButtonPressed = Joystick.isPressed;
 		isAttackButtonPressed = AttackButton.isPressed;
