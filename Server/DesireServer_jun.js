@@ -28,8 +28,12 @@ server.listen(port, function () {
   console.log('Server listening at port %d', port);
 });
 
-// Chatroom
+// How many users in the same chatting room?
 var numUsers = 0;
+
+// Imgage Listview in order to store the current version of picture
+var current_img = [];
+var send_list = [];
 
 // When the client upload the img file port
 app.listen(port_img, function(){
@@ -164,5 +168,50 @@ io.on('connection', function(socket) {
       db.close();
     });
   });
-    
+  
+  //In order to feed on the listview
+  socket.on('imagelist', function (data){
+    console.log('\timagelist ', data.position);
+    //query on the database and retrieve the results
+    MongoClient.connect(url, function (err, db){
+	    db.collection("HamImageInformation").find({"position":data.position}).toArray(function (err, items) {
+        if(err){
+          console.log('Error: ', err);
+        }
+        else {
+          if(items.length > 0){
+            current_img = [];
+            send_list = [];
+            console.log('\tsave');
+            var time_stamp = "0"; //just use for calculate the time order
+            current_img[items[0].img_file_name] = items[0];
+
+            items.forEach(function(entry){
+              if(time_stamp.localeCompare(entry.time) < 0){
+                time_stamp = entry.time;
+                current_img[entry.img_file_name] = entry;
+              }
+              //console.log('\t\t\tconsole ', current_img[entry.img_file_name]);
+            });
+
+            //processing the img http address
+            for(var key in current_img){
+              var html_addr = "http://143.248.140.92/~user/img_temp_hamfeed/" + current_img[key].img_file_name;
+              //json processing new type
+              var data = {
+                position: current_img[key].position,
+                time: current_img[key].time,
+                username: current_img[key].username,
+                html_addr: html_addr
+              };
+              send_list.push(data);
+              socket.emit('imageresponse', send_list);
+              console.log('\t\t send_list\n', send_list);
+            }
+          }
+        }
+        db.close();
+      });
+    });
+  });
 });
