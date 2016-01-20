@@ -13,6 +13,9 @@ public class GameInputManager : MonoBehaviour {
 	UIJoystick AttackButton;
 	UIJoystick GuardButton;
 	UIJoystick JumpButton;
+	float ATT = 0.2f;
+	float GTT = 0.2f;
+	float JTT = 0.15f;
 
 	//Variables to process input
 	public bool joystickInput;
@@ -37,22 +40,29 @@ public class GameInputManager : MonoBehaviour {
 	public float jumpHoldTime;
 
 	//Final Output for other classes to use
-	public static Vector2 JoystickPosition;
-	public static bool isJoystickButtonPressed;
-	public static bool isAttackButtonPressed;
-	public static bool isGuardButtonPressed;
-	public static bool isJumpButtonPressed;
-	public static bool isWalk;
-	public static bool isDash;
-	public static InputType inputType;
-	public static Vector2 inputDirection;
+	public Vector2 JoystickPosition;
+	public bool isJoystickButtonPressed;
+	public bool isAttackButtonPressed;
+	public bool isGuardButtonPressed;
+	public bool isJumpButtonPressed;
+	public bool isWalk;
+	public bool isDash;
+	public InputType inputType;
+	public Vector2 inputDirection;
 
 	// Use this for initialization
 	void Start () {
+		Initialize ();
 		Joystick = g_Joystick.GetComponent<UIJoystick> ();
 		AttackButton = g_AttackButton.GetComponent<UIJoystick> ();
 		GuardButton = g_GuardButton.GetComponent<UIJoystick> ();
 		JumpButton = g_JumpButton.GetComponent<UIJoystick> ();
+	}
+
+	void Initialize() {
+		attackTapTime = ATT;
+		guardTapTime = GTT;
+		jumpTapTime = JTT;
 	}
 	
 	// Update is called once per frame

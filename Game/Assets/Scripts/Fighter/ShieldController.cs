@@ -1,12 +1,11 @@
 ﻿using UnityEngine;
-using UnityEngine.Networking;
 using System.Collections;
 
-public class ShieldController : NetworkBehaviour {
+public class ShieldController : MonoBehaviour {
 
 	//Attributes
 	public float ShieldHealth = 30f;
-	[SyncVar] public float health;
+	public float health;
 	public float degenRate = 5f;
 	public float regenRate = 5f;
 
@@ -22,15 +21,11 @@ public class ShieldController : NetworkBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		//Update Shield Size
-		float scale = Mathf.Sqrt(health / ShieldHealth);
-		shield.transform.localScale = new Vector3 (1.5f * scale, 1.5f * scale, 1f);
+		
 	}
 
 	void FixedUpdate () {
 		//Decrease Shield Health over time
-		if (!isServer)
-			return;
 		if (shield.activeSelf) {
 			TakeDamage (degenRate * Time.fixedDeltaTime);
 		} else {
@@ -39,14 +34,10 @@ public class ShieldController : NetworkBehaviour {
 	}
 
 	public void Reset() {
-		if (!isServer)
-			return;
 		health = ShieldHealth;
 	}
 
 	public void TakeDamage(float damage) {
-		if (!isServer)
-			return;
 		health -= damage;
 		if (health <= 0) {
 			fighter.ShieldStun (5f);
@@ -56,20 +47,14 @@ public class ShieldController : NetworkBehaviour {
 	}
 
 	public void HitStun(float duration) {
-		if (!isServer)
-			return;
 		fighter.HitStun (duration);
 	}
 
 	public void Knockback(Vector2 direction, float strength) {
-		if (!isServer)
-			return;
 		fighter.Launch (direction, strength);
 	}
 
 	public void Heal(float heal) {
-		if (!isServer)
-			return;
 		health += heal;
 		Clamp ();
 	}

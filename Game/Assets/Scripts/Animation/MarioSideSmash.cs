@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
-using UnityEngine.Networking;
 using System.Collections;
 
-public class MarioSideSmash : NetworkBehaviour {
+public class MarioSideSmash : MonoBehaviour {
 
 	public int hitBoxFrame = 5;
 	public int frameLeft;

@@ -4,32 +4,34 @@ using System.Collections;
 
 public class FighterController : NetworkBehaviour, Fighter {
 
+	public PlayerInput Input;
+
 	public float GRAVITY = 0.3f;
 
 	//Basic information
 	public bool isDummy;
 	Rigidbody2D rb;
-	public Player player;
+	[SyncVar] public Player player;
 	public string characterName = "Mario";
 	public GameLogic logic;
 	public Animator anim;
 	public SpriteRenderer sprite;
 
 	//Status
-	public bool isFacingRight;
-	public bool isDead;
-	public bool isWalking;
-	public bool isDashing;
-	public bool isHitStunned;
-	public float hitStunDuration;
-	public bool isBusy;
-	public bool isGuarding;
-	public bool isRolling;
-	public bool isJumping;
-	public bool isDoubleJumping;
-	public bool isGrounded;
-	public bool isFalling;
-	public bool isSpiked;
+	[SyncVar] public bool isFacingRight;
+	[SyncVar] public bool isDead;
+	[SyncVar] public bool isWalking;
+	[SyncVar] public bool isDashing;
+	[SyncVar] public bool isHitStunned;
+	[SyncVar] public float hitStunDuration;
+	[SyncVar] public bool isBusy;
+	[SyncVar] public bool isGuarding;
+	[SyncVar] public bool isRolling;
+	[SyncVar] public bool isJumping;
+	[SyncVar] public bool isDoubleJumping;
+	[SyncVar] public bool isGrounded;
+	[SyncVar] public bool isFalling;
+	[SyncVar] public bool isSpiked;
 
 	//Attributes
 	public string playerName;
@@ -59,9 +61,19 @@ public class FighterController : NetworkBehaviour, Fighter {
 	public LayerMask mapLayerMask;
 	public LayerMask playerLayerMask;
 
+	public void SetInput(PlayerInput input) {
+		this.Input = input;
+	}
+
+	public void SetPlayer(Player pl) {
+		player = pl;
+	}
+
 	// Use this for initialization
 	void Start () {
 		//Initialize
+		if (!isServer)
+			return;
 		rb = GetComponent<Rigidbody2D> ();
 		GameObject g_logic = GameObject.FindGameObjectWithTag ("Logic");
 		logic = g_logic.GetComponent<GameLogic> ();
@@ -69,9 +81,9 @@ public class FighterController : NetworkBehaviour, Fighter {
 		sprite = GetComponent<SpriteRenderer> ();
 
 		//Add to the PlayerContainer Object
-		player = PlayerContainer.Add (this);
-		setName (player.ToString ());
-		Debug.Log (PlayerContainer.Get(player).getName() + " joined the game");
+		//player = PlayerContainer.Add (this);
+		//setName (player.ToString ());
+		//Debug.Log (PlayerContainer.Get(player).getName() + " joined the game");
 
 		//Set up Current Attributes
 		velocity = Vector2.zero;
@@ -80,23 +92,22 @@ public class FighterController : NetworkBehaviour, Fighter {
 	
 	// Update is called once per frame
 	void FixedUpdate () {
-		if (!isDummy) {
-			if (!isLocalPlayer)
-				return;
-		}
+		if (!isServer)
+			return;
 		rectBox = new Rect (hurtBox.bounds.min.x, hurtBox.bounds.min.y, hurtBox.bounds.size.x, hurtBox.bounds.size.y);
 		isBusy = anim.GetBool ("isBusy");
-		if (!isDummy)
-			UpdateControl ();
+		UpdateControl ();
 		UpdatePhysics ();
-		rb.velocity = velocity;
-		Flip ();
+		UpdateHitStun ();
+		UpdateAnimation ();
+	}
+
+	void UpdateHitStun() {
 		if (hitStunDuration > 0) {
 			hitStunDuration -= Time.fixedDeltaTime;
 		} else {
 			isHitStunned = false;
 		}
-		UpdateAnimation ();
 	}
 
 	void UpdateControl() {
@@ -116,8 +127,8 @@ public class FighterController : NetworkBehaviour, Fighter {
 			if (isHitStunned) {
 
 			} else {
-				isWalking = GameInputManager.isWalk;
-				isDashing = GameInputManager.isDash;
+				isWalking = Input.isWalk;
+				isDashing = Input.isDash;
 			}
 		} else { //If it is in air...
 			
@@ -128,58 +139,58 @@ public class FighterController : NetworkBehaviour, Fighter {
 		//Update Attack input
 		anim.SetTrigger("Attack");
 		if (isGrounded) { //Ground Moves
-			if (GameInputManager.inputType == InputType.AttackStrong) { //Smash Attacks
-				GameInputManager.inputType = InputType.None;
-				if (GameInputManager.inputDirection == Vector2.left) { //Left Side Smash
+			if (Input.inputType == InputType.AttackStrong) { //Smash Attacks
+				Input.Reset();
+				if (Input.inputDirection == Vector2.left) { //Left Side Smash
 					isFacingRight = false;
 					Flip ();
 					LeftSideSmash ();
-				} else if (GameInputManager.inputDirection == Vector2.right) { //Right Side Smash
+				} else if (Input.inputDirection == Vector2.right) { //Right Side Smash
 					isFacingRight = true;
 					Flip ();
 					RightSideSmash ();
-				} else if (GameInputManager.inputDirection == Vector2.up) { //Up Smash
+				} else if (Input.inputDirection == Vector2.up) { //Up Smash
 					UpSmash ();
-				} else if (GameInputManager.inputDirection == Vector2.down) { //Down Smash
+				} else if (Input.inputDirection == Vector2.down) { //Down Smash
 					DownSmash ();
 				}
-			} else if (GameInputManager.inputType == InputType.AttackWeak) { //Weak Attacks
-				GameInputManager.inputType = InputType.None;
-				if (GameInputManager.inputDirection == Vector2.left) { //Left Weak Attack
+			} else if (Input.inputType == InputType.AttackWeak) { //Weak Attacks
+				Input.Reset();
+				if (Input.inputDirection == Vector2.left) { //Left Weak Attack
 					isFacingRight = false;
 					Flip ();
 					LeftWeakAttack ();
-				} else if (GameInputManager.inputDirection == Vector2.right) { //Right Weak Attack
+				} else if (Input.inputDirection == Vector2.right) { //Right Weak Attack
 					isFacingRight = true;
 					Flip ();
 					RightWeakAttack ();
-				} else if (GameInputManager.inputDirection == Vector2.up) { //Up Weak Attack
+				} else if (Input.inputDirection == Vector2.up) { //Up Weak Attack
 					UpWeakAttack ();
-				} else if (GameInputManager.inputDirection == Vector2.down) { //Down Weak Attack
+				} else if (Input.inputDirection == Vector2.down) { //Down Weak Attack
 					DownWeakAttack ();
 				}
-			} else if (GameInputManager.inputType == InputType.AttackTap) { //Jab Attack
-				GameInputManager.inputType = InputType.None;
+			} else if (Input.inputType == InputType.AttackTap) { //Jab Attack
+				Input.Reset();
 				Jab ();
 			}
 		} else { //Air Moves
-			if (GameInputManager.inputType == InputType.AttackStrong 
-				|| GameInputManager.inputType == InputType.AttackWeak) {
-				GameInputManager.inputType = InputType.None;
+			if (Input.inputType == InputType.AttackStrong 
+				|| Input.inputType == InputType.AttackWeak) {
+				Input.Reset();
 				float modifier = isFacingRight ? 1f : -1f;
 				Vector2 faceDirection = new Vector2 (modifier, 0f);
-				if (GameInputManager.inputDirection.x != 0) { 
-					if (GameInputManager.inputDirection == faceDirection) { //Forward Air
+				if (Input.inputDirection.x != 0) { 
+					if (Input.inputDirection == faceDirection) { //Forward Air
 						ForwardAir ();
 					} else { //Back Air
 						BackAir ();
 					}
-				} else if (GameInputManager.inputDirection == Vector2.up) { //Up Air
+				} else if (Input.inputDirection == Vector2.up) { //Up Air
 					UpAir ();
-				} else if (GameInputManager.inputDirection == Vector2.down) { //Down Air
+				} else if (Input.inputDirection == Vector2.down) { //Down Air
 					DownAir ();
 				}
-			} else if (GameInputManager.inputType == InputType.AttackTap) { //Neutral Air
+			} else if (Input.inputType == InputType.AttackTap) { //Neutral Air
 				NeutralAir ();
 			}
 		}
@@ -246,21 +257,21 @@ public class FighterController : NetworkBehaviour, Fighter {
 	void UpdateGuard() {
 		//Update Guarding
 		if (isGrounded) { //Ground Guard Moves
-			if (GameInputManager.inputType == InputType.Guard) {
-				GameInputManager.inputType = InputType.None;
+			if (Input.inputType == InputType.Guard) {
+				Input.Reset();
 				Guard ();
-			} else if (GameInputManager.inputType == InputType.Roll) {
-				GameInputManager.inputType = InputType.None;
+			} else if (Input.inputType == InputType.Roll) {
+				Input.Reset();
 				if (!isRolling) {
 					isRolling = true;
-					if ((GameInputManager.inputDirection == Vector2.left && !isFacingRight)
-					   || (GameInputManager.inputDirection == Vector2.right && isFacingRight)) { //Forward Roll
+					if ((Input.inputDirection == Vector2.left && !isFacingRight)
+						|| (Input.inputDirection == Vector2.right && isFacingRight)) { //Forward Roll
 						RollForward ();
-					} else if ((GameInputManager.inputDirection == Vector2.right && !isFacingRight)
-					          || (GameInputManager.inputDirection == Vector2.left && isFacingRight)) { //Backward Roll
+					} else if ((Input.inputDirection == Vector2.right && !isFacingRight)
+						|| (Input.inputDirection == Vector2.left && isFacingRight)) { //Backward Roll
 						RollBackward ();
-					} else if (GameInputManager.inputDirection == Vector2.up
-					          || GameInputManager.inputDirection == Vector2.down) { //Side Dodge
+					} else if (Input.inputDirection == Vector2.up
+						|| Input.inputDirection == Vector2.down) { //Side Dodge
 						SideDodge ();
 					}
 				}
@@ -269,9 +280,9 @@ public class FighterController : NetworkBehaviour, Fighter {
 				isRolling = false;
 			}
 		} else { //Air Guard Moves
-			if (GameInputManager.inputType == InputType.Guard
-			    || GameInputManager.inputType == InputType.Roll) { //Air Dodge
-				GameInputManager.inputType = InputType.None;
+			if (Input.inputType == InputType.Guard
+				|| Input.inputType == InputType.Roll) { //Air Dodge
+				Input.Reset();
 				AirDodge ();
 			} else {
 				isGuarding = false;
@@ -311,11 +322,11 @@ public class FighterController : NetworkBehaviour, Fighter {
 
 	void UpdateJump() {
 		//Update Jumping
-		if (GameInputManager.inputType == InputType.JumpTap) {
-			GameInputManager.inputType = InputType.None;
+		if (Input.inputType == InputType.JumpTap) {
+			Input.Reset();
 			JumpTap ();
-		} else if (GameInputManager.inputType == InputType.JumpHold) {
-			GameInputManager.inputType = InputType.None;
+		} else if (Input.inputType == InputType.JumpHold) {
+			Input.Reset();
 			JumpHold ();
 		}
 	}
@@ -341,7 +352,7 @@ public class FighterController : NetworkBehaviour, Fighter {
 	void JumpHold() {
 		JumpTap ();
 	}
-
+		
 	void UpdatePhysics() {
 		newVelocity = velocity;
 		//Apply Horizontal Movement
@@ -443,12 +454,14 @@ public class FighterController : NetworkBehaviour, Fighter {
 
 		//Apply New Velocity
 		velocity = newVelocity;
+		rb.velocity = velocity;
+		Flip ();
 	}
 
 	void Walk() {
 		anim.SetTrigger ("Walk");
-		newVelocity.x += acceleration * GameInputManager.JoystickPosition.x;
-		float clampWalkSpeed = walkSpeed * Mathf.Abs (GameInputManager.JoystickPosition.x);
+		newVelocity.x += acceleration * Input.JoystickPosition.x;
+		float clampWalkSpeed = walkSpeed * Mathf.Abs (Input.JoystickPosition.x);
 		newVelocity.x = Mathf.Clamp (newVelocity.x, -clampWalkSpeed, clampWalkSpeed);
 		if (velocity.x > 0) {
 			isFacingRight = true;
@@ -460,7 +473,7 @@ public class FighterController : NetworkBehaviour, Fighter {
 
 	void Dash() {
 		anim.SetTrigger ("Dash");
-		int modifier = GameInputManager.JoystickPosition.x > 0 ? 1 : -1;
+		int modifier = Input.JoystickPosition.x > 0 ? 1 : -1;
 		if ((modifier > 0 && velocity.x < 0) || (modifier < 0 && velocity.x > 0)) {
 			newVelocity.x += deceleration * modifier;
 		} else {
@@ -475,8 +488,8 @@ public class FighterController : NetworkBehaviour, Fighter {
 	}
 
 	void AirMove() {
-		newVelocity.x += acceleration * GameInputManager.JoystickPosition.x;
-		float clampAirSpeed = airSpeed * Mathf.Abs (GameInputManager.JoystickPosition.x);
+		newVelocity.x += acceleration * Input.JoystickPosition.x;
+		float clampAirSpeed = airSpeed * Mathf.Abs (Input.JoystickPosition.x);
 		newVelocity.x = Mathf.Clamp (newVelocity.x, -clampAirSpeed, clampAirSpeed);
 	}
 
@@ -501,7 +514,7 @@ public class FighterController : NetworkBehaviour, Fighter {
 	}
 
 	void UpdateAnimation() {
-		anim.SetFloat("WalkSpeed", Mathf.Abs (GameInputManager.JoystickPosition.x));
+		anim.SetFloat("WalkSpeed", Mathf.Abs (Input.JoystickPosition.x));
 		anim.SetBool ("isFalling", isFalling);
 		anim.SetBool ("isHitStunned", isHitStunned);
 		anim.SetBool ("isGuarding", isGuarding);
@@ -509,7 +522,7 @@ public class FighterController : NetworkBehaviour, Fighter {
 
 	void OnApplicationQuit() {
 		PlayerContainer.Remove (player);
-		Debug.Log (player.ToString () + " left the game.");
+		Debug.Log (player.ToString () + " quit the game.");
 	}
 
 	void Flip() {

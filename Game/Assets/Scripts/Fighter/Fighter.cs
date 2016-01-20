@@ -3,6 +3,10 @@ using UnityEngine;
 
 public interface Fighter {
 
+	void SetInput (PlayerInput input);
+
+	void SetPlayer (Player pl);
+
 	void HitStun(float duration);
 
 	void ShieldStun(float duration);

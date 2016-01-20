@@ -25,7 +25,6 @@ GameObject:
   - 4: {fileID: 463068}
   - 58: {fileID: 5836566}
   - 114: {fileID: 11418512}
-  - 114: {fileID: 11491602}
   m_Layer: 0
   m_Name: Hitbox1
   m_TagString: Untagged
@@ -63,6 +62,8 @@ GameObject:
   - 50: {fileID: 5028146}
   - 95: {fileID: 9536192}
   - 114: {fileID: 11414518}
+  - 114: {fileID: 11434926}
+  - 114: {fileID: 11479682}
   m_Layer: 0
   m_Name: Player
   m_TagString: Fighter
@@ -80,7 +81,6 @@ GameObject:
   - 4: {fileID: 443932}
   - 61: {fileID: 6189872}
   - 114: {fileID: 11442620}
-  - 114: {fileID: 11407938}
   m_Layer: 0
   m_Name: HurtBox
   m_TagString: HurtBox
@@ -114,7 +114,6 @@ GameObject:
   m_Component:
   - 4: {fileID: 482614}
   - 114: {fileID: 11477760}
-  - 114: {fileID: 11499912}
   m_Layer: 0
   m_Name: Shield
   m_TagString: Untagged
@@ -345,38 +344,6 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &11407938
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 151764}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 372142912, guid: 870353891bb340e2b2a9c8707e7419ba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SceneId:
-    m_Value: 0
-  m_AssetId:
-    i0: 58
-    i1: 75
-    i2: 252
-    i3: 157
-    i4: 133
-    i5: 187
-    i6: 100
-    i7: 168
-    i8: 250
-    i9: 12
-    i10: 116
-    i11: 92
-    i12: 249
-    i13: 196
-    i14: 178
-    i15: 180
-  m_ServerOnly: 0
-  m_LocalPlayerAuthority: 0
 --- !u!114 &11414518
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -389,7 +356,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Animator: {fileID: 9536192}
-  m_ParameterSendBits: 8191
+  m_ParameterSendBits: 131071
   param0: 
   param1: 
   param2: 
@@ -427,6 +394,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed2061bd6e9bd41f0a1ed567f7c2c2b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Input: {fileID: 0}
   GRAVITY: 0.3
   isDummy: 0
   player: 0
@@ -469,6 +437,19 @@ MonoBehaviour:
   playerLayerMask:
     serializedVersion: 2
     m_Bits: 512
+--- !u!114 &11434926
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 144222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b7f63e0e14a342c59881fdbcdf3e027, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controller: {fileID: 11477760}
+  shield: {fileID: 166348}
 --- !u!114 &11442620
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -497,38 +478,17 @@ MonoBehaviour:
   degenRate: 5
   regenRate: 5
   shield: {fileID: 166348}
---- !u!114 &11491602
+--- !u!114 &11479682
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 127736}
+  m_GameObject: {fileID: 144222}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 372142912, guid: 870353891bb340e2b2a9c8707e7419ba, type: 3}
+  m_Script: {fileID: 11500000, guid: fbdf165434a074185b62bde481d578a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SceneId:
-    m_Value: 0
-  m_AssetId:
-    i0: 58
-    i1: 75
-    i2: 252
-    i3: 157
-    i4: 133
-    i5: 187
-    i6: 100
-    i7: 168
-    i8: 250
-    i9: 12
-    i10: 116
-    i11: 92
-    i12: 249
-    i13: 196
-    i14: 178
-    i15: 180
-  m_ServerOnly: 0
-  m_LocalPlayerAuthority: 0
 --- !u!114 &11496440
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -560,7 +520,7 @@ MonoBehaviour:
     i14: 178
     i15: 180
   m_ServerOnly: 0
-  m_LocalPlayerAuthority: 1
+  m_LocalPlayerAuthority: 0
 --- !u!114 &11498200
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -574,45 +534,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_TransformSyncMode: 2
   m_SendInterval: 0.05
-  m_SyncRotationAxis: 3
+  m_SyncRotationAxis: 2
   m_RotationSyncCompression: 0
   m_SyncSpin: 0
   m_MovementTheshold: 0.001
   m_SnapThreshold: 5
   m_InterpolateRotation: 1
   m_InterpolateMovement: 1
---- !u!114 &11499912
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 168030}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 372142912, guid: 870353891bb340e2b2a9c8707e7419ba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SceneId:
-    m_Value: 0
-  m_AssetId:
-    i0: 58
-    i1: 75
-    i2: 252
-    i3: 157
-    i4: 133
-    i5: 187
-    i6: 100
-    i7: 168
-    i8: 250
-    i9: 12
-    i10: 116
-    i11: 92
-    i12: 249
-    i13: 196
-    i14: 178
-    i15: 180
-  m_ServerOnly: 0
-  m_LocalPlayerAuthority: 0
 --- !u!212 &21213362
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -815,6 +743,10 @@ Prefab:
       propertyPath: playerLayerMask.m_Bits
       value: 512
       objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: controller
+      value: 
+      objectReference: {fileID: 11477760}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 144222}

@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
+using UnityEngine.Networking;
 using System.Collections;
 
-public class PlayerContainer {
+public class PlayerContainer : NetworkBehaviour {
 
 	public static bool isFull;
 	public static int numPlayers;
@@ -23,7 +24,7 @@ public class PlayerContainer {
 			if (Players [i] == null) {
 				Players [i] = player;
 				numPlayers++;
-				Update ();
+				UpdateContainer ();
 				switch (i) {
 				case 0:
 					Player1 = player;
@@ -53,19 +54,23 @@ public class PlayerContainer {
 		switch (player) {
 		case Player.Player1:
 			Player1 = null;
+			Players [0] = null;
 			break;
 		case Player.Player2:
 			Player2 = null;
+			Players [1] = null;
 			break;
 		case Player.Player3:
 			Player3 = null;
+			Players [2] = null;
 			break;
 		case Player.Player4:
 			Player4 = null;
+			Players [3] = null;
 			break;
 		}
 		numPlayers--;
-		Update ();
+		UpdateContainer ();
 		return true;
 	}
 
@@ -90,11 +95,19 @@ public class PlayerContainer {
 		return Players;
 	}
 
-	static void Update() {
+	static void UpdateContainer() {
 		if (numPlayers >= 4) {
 			isFull = true;
 		} else {
 			isFull = false;
 		}
+		Debug.Log ((Players [0] == null).ToString () + (Players [1] == null).ToString () +
+		(Players [2] == null).ToString () + (Players [3] == null).ToString ());
+	}
+
+	void OnPlayerDisconnected(NetworkPlayer p) {
+		Debug.Log("Clean up after player " + p);
+		Debug.Log(p.ToString ());
+		//PlayerContainer.Remove (player);
 	}
 }

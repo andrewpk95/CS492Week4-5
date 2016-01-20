@@ -26,25 +26,27 @@ public class TimedGameLogic : NetworkBehaviour, GameLogic {
 	// Update is called once per frame
 	void Update () {
 		//Tick down the time
-		UITime.write (remainingTime);
 		if (!isServer)
 			return;
 		remainingTime -= Time.deltaTime;
 		if (remainingTime < 0) {
-			UITime.write (0f);
+			remainingTime = 0;
 			OnGameOver ();
 		}
 	}
 
 	public void OnPlayerDeath(GameObject player) {
 		Debug.Log (player.name + " died! Respawning in 1 second...");
-		StartCoroutine (Respawn (player));
+		RpcRespawn (player);
 	}
 
-	public IEnumerator Respawn(GameObject player) {
+	[ClientRpc]
+	public void RpcRespawn(GameObject player) {
+		if (!isLocalPlayer)
+			return;
 		player.GetComponent<Fighter> ().Revive ();
 		player.SetActive (false);
-		yield return new WaitForSeconds (RESPAWN_TIME);
+		//yield return new WaitForSeconds (RESPAWN_TIME);
 		player.transform.position = SPAWN_POSITION;
 		player.SetActive (true);
 	}
