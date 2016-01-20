@@ -41,7 +41,6 @@ app.listen(port_img, function(){
   console.log('Server numUsers ', numUsers);
 });
 
-
 io.on('connection', function(socket) {
   var addedUser = false;
 
@@ -184,6 +183,7 @@ io.on('connection', function(socket) {
             send_list = [];
             console.log('\tsave');
             var time_stamp = "0"; //just use for calculate the time order
+            //the key should be username + img_file_name
             current_img[items[0].img_file_name] = items[0];
 
             items.forEach(function(entry){
@@ -196,7 +196,11 @@ io.on('connection', function(socket) {
 
             //processing the img http address
             for(var key in current_img){
-              var html_addr = "http://143.248.140.92/~user/img_temp_hamfeed/" + current_img[key].img_file_name;
+              var html_addr = "http://143.248.140.92/~user/img_temp_hamfeed/" + 
+                              current_img[key].position + "_" + 
+                              current_img[key].username + "_" +
+                              current_img[key].time + "_" +
+                              current_img[key].img_file_name;
               //json processing new type
               var data = {
                 position: current_img[key].position,
