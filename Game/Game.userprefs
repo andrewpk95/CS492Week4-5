@@ -3,13 +3,14 @@
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Fighter/FighterController.cs">
     <Files>
       <File FileName="Assets/Scripts/Animation/MarioSideSmash.cs" Line="7" Column="23" />
-      <File FileName="Assets/Scripts/GameLogic/GameInputManager.cs" Line="59" Column="12" />
-      <File FileName="Assets/Scripts/Fighter/FighterController.cs" Line="479" Column="40" />
+      <File FileName="Assets/Scripts/GameLogic/GameInputManager.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Fighter/Fighter.cs" Line="8" Column="34" />
-      <File FileName="Assets/Scripts/Fighter/HitController.cs" Line="28" Column="4" />
-      <File FileName="Assets/Scripts/Fighter/ShieldController.cs" Line="46" Column="13" />
-      <File FileName="Assets/Scripts/Animation/BusyBehaviour.cs" Line="29" Column="4" />
-      <File FileName="Assets/Scripts/Animation/WalkAnimation.cs" Line="14" Column="52" />
+      <File FileName="Assets/Scripts/Fighter/HitController.cs" Line="22" Column="31" />
+      <File FileName="Assets/Scripts/Fighter/ShieldController.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Fighter/FighterController.cs" Line="7" Column="8" />
+      <File FileName="Assets/Scripts/Fighter/MarioController.cs" Line="5" Column="2" />
+      <File FileName="Assets/Scripts/Network/MyNetworkManager.cs" Line="8" Column="1" />
+      <File FileName="Assets/Scripts/GameLogic/TimedGameLogic.cs" Line="15" Column="11" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

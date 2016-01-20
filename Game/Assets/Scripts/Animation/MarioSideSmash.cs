@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
+using UnityEngine.Networking;
 using System.Collections;
 
-public class MarioSideSmash : MonoBehaviour {
+public class MarioSideSmash : NetworkBehaviour {
 
 	public int hitBoxFrame = 5;
 	public int frameLeft;
@@ -34,6 +35,8 @@ public class MarioSideSmash : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D col)
 	{
+		//if (!isServer)
+			//return;
 		if (col.gameObject.tag == "Shield") {
 			Fighter player = GetComponentInParent<Fighter> ();
 			ShieldController target = col.gameObject.GetComponentInParent<ShieldController> ();

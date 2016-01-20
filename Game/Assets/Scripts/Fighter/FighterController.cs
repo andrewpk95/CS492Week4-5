@@ -4,7 +4,7 @@ using System.Collections;
 
 public class FighterController : NetworkBehaviour, Fighter {
 
-	public const float GRAVITY = 0.3f;
+	public float GRAVITY = 0.3f;
 
 	//Basic information
 	public bool isDummy;
@@ -53,6 +53,7 @@ public class FighterController : NetworkBehaviour, Fighter {
 	//Variables for detecting ground collision
 	Rect rectBox;
 	int numVerticalRays = 3;
+	int numHorizontalRays = 3;
 	float margin = 0.02f;
 	public bool isConnected;
 	public LayerMask mapLayerMask;
@@ -300,10 +301,12 @@ public class FighterController : NetworkBehaviour, Fighter {
 
 	void SideDodge() {
 		Debug.Log (playerName + "'s Side Dodge!");
+		anim.SetTrigger ("SideDodge");
 	}
 
 	void AirDodge() {
 		Debug.Log (playerName + "'s Air Dodge!");
+		anim.SetTrigger ("AirDodge");
 	}
 
 	void UpdateJump() {
@@ -381,6 +384,21 @@ public class FighterController : NetworkBehaviour, Fighter {
 			Vector2 endPoint = new Vector2 (rectBox.center.x, rectBox.yMax - margin);
 			RaycastHit2D hitInfo;
 			float rayDistance = rectBox.width / 2 + Mathf.Abs (newVelocity.x * Time.fixedDeltaTime);
+			Vector2 direction = newVelocity.x > 0 ? Vector2.right : Vector2.left;
+			isConnected = false;
+
+			for (int i = 0; i < numHorizontalRays; i++) {
+				float lerpAmount = (float)i / (float)(numHorizontalRays - 1);
+				Vector2 origin = Vector2.Lerp (startPoint, endPoint, lerpAmount);
+				Debug.DrawLine (new Vector3 (origin.x, origin.y, 0), new Vector3 (origin.x - rayDistance, origin.y , 0), Color.red);
+				hitInfo = Physics2D.Raycast (origin, direction, rayDistance, mapLayerMask);
+				isConnected = hitInfo.collider != null;
+				if (isConnected) {
+					transform.Translate (direction * (hitInfo.distance - rectBox.width / 2));
+					newVelocity.x = 0;
+					break;
+				}
+			}
 		}
 
 		//Apply Gravity

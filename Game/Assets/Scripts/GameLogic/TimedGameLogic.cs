@@ -1,16 +1,18 @@
 ﻿using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using System.Collections;
 
-public class TimedGameLogic : MonoBehaviour, GameLogic {
+public class TimedGameLogic : NetworkBehaviour, GameLogic {
 
 	//Constants
 	public const float RESPAWN_TIME = 1;
 	public static Vector3 SPAWN_POSITION;
 
 	//Time
-	public float timeLength = 10f;
+	public float timeLength = 300f;
 	public float startTime;
+	[SyncVar]
 	public float remainingTime;
 
 	// Use this for initialization
@@ -24,8 +26,10 @@ public class TimedGameLogic : MonoBehaviour, GameLogic {
 	// Update is called once per frame
 	void Update () {
 		//Tick down the time
-		remainingTime -= Time.deltaTime;
 		UITime.write (remainingTime);
+		if (!isServer)
+			return;
+		remainingTime -= Time.deltaTime;
 		if (remainingTime < 0) {
 			UITime.write (0f);
 			OnGameOver ();
