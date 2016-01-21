@@ -7,6 +7,7 @@ public class ListItem {
     private String author;
     private String img_url;
     private String timestamp;
+    private String roomnumber;
 
     public void setAuthor(String auth){
         author = auth;
@@ -30,5 +31,19 @@ public class ListItem {
 
     public String getTimestamp(){
         return timestamp;
+    }
+
+    public void setRoomnumber(String proom){
+        roomnumber = proom;
+    }
+
+    public String getRoomnumber(){
+        return roomnumber;
+    }
+
+    public String getFileName(){
+        String img_uuid = this.img_url.substring(img_url.lastIndexOf("/") + 1);
+        String filename = img_uuid.substring(img_uuid.lastIndexOf(timestamp) + timestamp.length() + 1);
+        return filename;
     }
 }

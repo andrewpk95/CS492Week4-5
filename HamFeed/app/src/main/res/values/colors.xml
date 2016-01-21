@@ -31,4 +31,9 @@
         <item>@color/username10</item>
         <item>@color/username11</item>
     </array>
+
+    <color name="holo_blue_dark">#ff0099cc</color>
+    <color name="view_divider_color">#BABABA</color>
+    <color name="view_divider_color_2">#DADADA</color>
+
 </resources>

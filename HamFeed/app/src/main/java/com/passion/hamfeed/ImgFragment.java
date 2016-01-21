@@ -11,6 +11,8 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.CursorLoader;
@@ -20,12 +22,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.gson.GsonBuilder;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.Response;
@@ -34,11 +38,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -46,9 +55,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.SimpleTimeZone;
 import java.util.concurrent.Future;
+import java.util.logging.LogRecord;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -67,6 +79,7 @@ public class ImgFragment extends Fragment {
     private ImageView show_img;
     private String mUsername;
     private String mPosition;
+    private String currentTime;
     private Socket mSocket;
     {
         try {
@@ -80,16 +93,22 @@ public class ImgFragment extends Fragment {
 
     private final String imgUpload = "image";
     private final String imgFeed = "imageresponse";
+
+    private final int FEED_LISTVIEW = 0;
+
     private ListItem[] listItems;
     private String[] img_html_urls;
     private LoadImgTask feedlv;
+    private MsgHandler mHandler;
+    private Context mContext;
+    private HttpConnect httpConnect;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         Ion.getDefault(getActivity()).configure().setLogging("ion-sample", Log.DEBUG);
-
+        mContext = getContext();
         mSocket.on(imgFeed, onImage);
     }
 
@@ -102,6 +121,9 @@ public class ImgFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        mHandler = new MsgHandler();
+
         send_img_sever = (Button)view.findViewById(R.id.send_img_to_server);
         send_img_sever.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,6 +147,28 @@ public class ImgFragment extends Fragment {
                 if (img_path == null) {
 
                 } else {
+                    //set the time stamp
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+                    currentTime = sdf.format(new Date());
+
+                    //send the server to indicate the user upload the img file
+                    JSONObject img_info = new JSONObject();
+
+                    try {
+                        img_info.put("username", mUsername);
+                        img_info.put("position", mPosition);
+                        img_info.put("img_file_name", img_path.substring(img_path.lastIndexOf("/") + 1));
+                        img_info.put("time", currentTime);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    mSocket.emit(imgUpload, img_info);
+
+                    //send information of picture before sending the picture
+                    httpConnect = new HttpConnect(Constants.IMG_INFOR_URL);
+                    httpConnect.execute();
+
                     //send the file to server
                     File img_file = new File(img_path);
 
@@ -145,22 +189,6 @@ public class ImgFragment extends Fragment {
                                     }
                                 }
                             });
-
-                    //send the server to indicate the user upload the img file
-                    JSONObject img_info = new JSONObject();
-
-                    try {
-                        img_info.put("username", mUsername);
-                        img_info.put("position", mPosition);
-                        img_info.put("img_file_name", img_path.substring(img_path.lastIndexOf("/") + 1));
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
-                        String currentTime = sdf.format(new Date());
-                        img_info.put("time", currentTime);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    mSocket.emit(imgUpload, img_info);
                 }
             }
         });
@@ -168,9 +196,27 @@ public class ImgFragment extends Fragment {
         show_img = (ImageView)view.findViewById(R.id.show_img);
 
         lv = (ListView)view.findViewById(R.id.img_list);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.i(TAG, "onItemClick Listener");
+                ListItem item = (ListItem)parent.getItemAtPosition(position);
+                Log.i(TAG, "user " + item.getAuthor() + " Img_url " + item.getImg_url() + " filename " + item.getFileName());
+                Intent slide = new Intent(mContext, ImgSlideActivity.class);
+                Bundle info_item = new Bundle();
+                info_item.putString("position", item.getRoomnumber());
+                info_item.putString("username", item.getAuthor());
+                info_item.putString("filename", item.getFileName());
+                info_item.putString("timestamp", item.getTimestamp());
+                slide.putExtras(info_item);
+                startActivity(slide);
+            }
+        });
 //        ArrayList<ListItem> srcList = new ArrayList<ListItem>(Arrays.asList(listItems));
 //        lv.setAdapter(new CustomListAdapter(getContext(), srcList));
     }
+
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -243,6 +289,7 @@ public class ImgFragment extends Fragment {
                     listItems[i].setImg_url(json.getString("html_addr"));
                     img_html_urls[i] = json.getString("html_addr");
                     listItems[i].setTimestamp(json.getString("time"));
+                    listItems[i].setRoomnumber(json.getString("position"));
 
 //                    Log.i(TAG, i + " th " + listItems[i].getAuthor() + " " + listItems[i].getImg_url() +
 //                            " " + listItems[i].getTimestamp());
@@ -253,6 +300,7 @@ public class ImgFragment extends Fragment {
             }
 
             //call handler to invoke the listview
+            mHandler.sendEmptyMessage(FEED_LISTVIEW);
         }
     };
 
@@ -273,18 +321,6 @@ public class ImgFragment extends Fragment {
         @Override
         protected void onPreExecute(){
             super.onPreExecute();
-            //query on server with chatting room number
-            JSONObject data = new JSONObject();
-
-            try {
-                data.put("position", mPosition);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            mSocket.emit("imagelist", data);
-
-            //and retrieve the JSON array result showing on the listview
         }
 
         @Override
@@ -302,6 +338,7 @@ public class ImgFragment extends Fragment {
             Bitmap bitmap = null;
             InputStream in = null;
 
+            Log.i(TAG, "LoadImage URL " + URL);
             try{
                 in = OpenHttpConnection(URL);
                 bitmap = BitmapFactory.decodeStream(in);
@@ -366,6 +403,75 @@ public class ImgFragment extends Fragment {
                 new LoadImgTask(icon).execute(listData.get(position).getImg_url());
             }
             return rowView;
+        }
+    }
+
+    class MsgHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg){
+            super.handleMessage(msg);
+
+            switch(msg.what){
+                case FEED_LISTVIEW:
+                    Log.i(TAG, listItems.toString());
+
+                    ArrayList<ListItem> srcList = new ArrayList<ListItem>(Arrays.asList(listItems));
+                    lv.setAdapter(new CustomListAdapter(mContext, srcList));
+
+                    break;
+
+            }
+        }
+    }
+
+    class HttpConnect extends AsyncTask<Void, Void, Void>{
+        private String json_data;
+        private String url;
+
+        public HttpConnect(String pUrl){
+            //send json data using http indicating the file information
+            Map<String, String> img_info_http = new HashMap<String, String>();
+            img_info_http.put("username", mUsername);
+            img_info_http.put("position", mPosition);
+            img_info_http.put("time", currentTime);
+            Log.i(TAG, "HttpConnect " + currentTime);
+            //it is possible to extract the image name on server, so do not including the file name
+            json_data = new GsonBuilder().create().toJson(img_info_http, Map.class);
+
+            url = pUrl;
+        }
+
+        public void makeRequest(String uri, String json) {
+            try {
+                URL url = new URL(uri);
+                HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+                connection.setDoOutput(true);
+                connection.setRequestMethod("POST");
+                connection.setRequestProperty("Content-Type", "application/json");
+
+                OutputStream os = connection.getOutputStream();
+                os.write(json.getBytes());
+                os.flush();
+
+                if(connection.getResponseCode() != HttpURLConnection.HTTP_OK){
+                    Log.i(TAG, "HttpURLConnection is not ok");
+                    throw new RuntimeException("Failed : Http error code: " + connection.getResponseCode());
+                }
+
+                connection.disconnect();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return ;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            makeRequest(url, json_data);
+            return null;
         }
     }
 }

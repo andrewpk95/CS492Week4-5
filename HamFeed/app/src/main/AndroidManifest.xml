@@ -27,6 +27,9 @@
             android:theme="@style/Theme.AppCompat"
             android:windowSoftInputMode="adjustResize|stateVisible" >
         </activity>
+        <activity
+            android:name="com.passion.hamfeed.ImgSlideActivity">
+        </activity>
     </application>
 
 </manifest>
