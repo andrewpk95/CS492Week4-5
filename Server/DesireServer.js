@@ -16,6 +16,46 @@ server.listen(port, function () {
   // Routing
 app.use(express.static(__dirname + '/public'));
 
-io.on('connection', function(socket) {
+var hostIP;
 
+io.on('connection', function(socket) {
+  var addedUser = false;
+  
+  socket.on('ConnectionTest', function (data) {
+    console.log('Connection Test Received: ', data);
+    socket.emit('ConnectionTest', {message: 'efgh'});
+  });
+  
+  socket.on('JoinRoom', function (data) {
+    console.log('Connect Request Received: ', data);
+    
+    if (hostIP == null) {
+      hostIP = socket.request.connection.remoteAddress.substring(7);
+      console.log('New host: ' + hostIP);
+      socket.emit('JoinRoom', {
+        'isHost': true,
+        'HostIP': hostIP
+      });
+    }
+    else {
+      var clientIP = socket.request.connection.remoteAddress.substring(7);
+      console.log('New client: ' + clientIP);
+      socket.emit('JoinRoom', {
+        'isHost': false,
+        'HostIP': hostIP,
+        'ClientIP': clientIP
+      });
+    }
+  });
+  
+  socket.on('disconnect', function (data) {
+    var IP = socket.request.connection.remoteAddress.substring(7);
+    if (IP == hostIP) {
+      console.log('Host (' + IP + ') Disconnected...');
+      hostIP = null;
+    }
+    else {
+      console.log('Client (' + IP + ') Disconnected...');
+    }
+  });
 });

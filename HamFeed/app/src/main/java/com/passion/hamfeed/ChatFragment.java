@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -38,9 +39,7 @@ import io.socket.emitter.Emitter;
  * Created by Junhong on 2016-01-14.
  */
 public class ChatFragment extends Fragment {
-    private static final int REQUEST_LOGIN = 0;
 
-    private static final int TYPING_TIMER_LENGTH = 600;
 
     private RecyclerView mMessagesView;
     private EditText mInputMessageView;
@@ -59,6 +58,10 @@ public class ChatFragment extends Fragment {
         }
     }
 
+    //Added
+    private String TAG = "ChatFragment";
+    private ImageButton send;
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -68,7 +71,6 @@ public class ChatFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setHasOptionsMenu(true);
 
         mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
@@ -80,20 +82,18 @@ public class ChatFragment extends Fragment {
         mSocket.on("stop typing", onStopTyping);
         mSocket.connect();
 
-//        Intent intent = new Intent(getActivity(), MyListActivity.class);
-//        startActivityForResult(intent, REQUEST_LOGIN);
+        startSignIn();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_main, container, false);
+        return inflater.inflate(R.layout.fragment_chat, container, false);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-
         mSocket.disconnect();
         mSocket.off(Socket.EVENT_CONNECT_ERROR, onConnectError);
         mSocket.off(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
@@ -139,7 +139,7 @@ public class ChatFragment extends Fragment {
                 }
 
                 mTypingHandler.removeCallbacks(onTypingTimeout);
-                mTypingHandler.postDelayed(onTypingTimeout, TYPING_TIMER_LENGTH);
+                mTypingHandler.postDelayed(onTypingTimeout, Constants.TYPING_TIMER_LENGTH);
             }
 
             @Override
@@ -147,8 +147,8 @@ public class ChatFragment extends Fragment {
             }
         });
 
-        ImageButton sendButton = (ImageButton) view.findViewById(R.id.send_button);
-        sendButton.setOnClickListener(new View.OnClickListener() {
+        send = (ImageButton) view.findViewById(R.id.send_button);
+        send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 attemptSend();
@@ -159,6 +159,7 @@ public class ChatFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         if (Activity.RESULT_OK != resultCode) {
             getActivity().finish();
             return;
@@ -168,8 +169,23 @@ public class ChatFragment extends Fragment {
         mPosition = data.getStringExtra("position");
         int numUsers = data.getIntExtra("numUsers", 1);
 
+        //return if there's no username and position number to broadcast
+        if(mUsername == null && mPosition == null){
+            return;
+        }
+
         addLog(getResources().getString(R.string.message_welcome));
         addParticipantsLog(numUsers);
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
     }
 
     @Override
@@ -232,7 +248,6 @@ public class ChatFragment extends Fragment {
     private void attemptSend() {
         if (null == mUsername) return;
         if (!mSocket.connected()) return;
-
         mTyping = false;
 
         String message = mInputMessageView.getText().toString().trim();
@@ -240,7 +255,6 @@ public class ChatFragment extends Fragment {
             mInputMessageView.requestFocus();
             return;
         }
-
         mInputMessageView.setText("");
         addMessage(mUsername, message);
 
@@ -249,9 +263,9 @@ public class ChatFragment extends Fragment {
     }
 
     private void startSignIn() {
-//        mUsername = null;
-//        Intent intent = new Intent(getActivity(), LoginActivity.class);
-//        startActivityForResult(intent, REQUEST_LOGIN);
+        mUsername = null;
+        Intent intent = new Intent(getActivity(), LoginActivity.class);
+        startActivityForResult(intent, Constants.REQUEST_LOGIN);
     }
 
     private void leave() {
