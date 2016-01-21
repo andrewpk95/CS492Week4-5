@@ -557,6 +557,8 @@ public class FighterController : NetworkBehaviour, Fighter {
 	}
 
 	public void Die() {
+		if (!isServer)
+			return;
 		isDead = true;
 		logic.OnPlayerDeath (this.gameObject);
 	}

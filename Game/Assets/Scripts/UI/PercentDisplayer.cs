@@ -37,6 +37,7 @@ public class PercentDisplayer : NetworkBehaviour {
 
 	[ClientRpc]
 	void RpcWrite(Player pl, string charName, float per) {
+		hit.percentage = per;
 		UI.write (pl, charName, per);
 	}
 }

@@ -16,11 +16,12 @@ public class ShieldDisplayer : NetworkBehaviour {
 		if (!isServer)
 			return;
 		float scale = Mathf.Sqrt(controller.health / controller.ShieldHealth);
-		RpcDraw (scale);
+		RpcDraw (controller.health, scale);
 	}
 
 	[ClientRpc]
-	void RpcDraw(float scale) {
+	void RpcDraw(float health, float scale) {
+		controller.health = health;
 		shield.transform.localScale = new Vector3 (1.5f * scale, 1.5f * scale, 1f);
 	}
 }

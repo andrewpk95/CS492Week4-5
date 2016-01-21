@@ -48,7 +48,7 @@ public class PlayerInput : NetworkBehaviour {
 
 	[ClientRpc]
 	void RpcAdd(Player pl) {
-		//player = pl;
+		player = pl;
 		this.gameObject.name = player.ToString ();
 	}
 
@@ -115,8 +115,10 @@ public class PlayerInput : NetworkBehaviour {
 
 	[ClientRpc]
 	void RpcReset() {
-		inputManager.inputType = InputType.None;
-		inputType = InputType.None;
+		if (inputManager != null) {
+			inputManager.inputType = InputType.None;
+			inputType = InputType.None;
+		}
 	}
 
 	void OnDestroy() {

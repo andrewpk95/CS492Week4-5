@@ -37,12 +37,12 @@ public class TimedGameLogic : NetworkBehaviour, GameLogic {
 
 	public void OnPlayerDeath(GameObject player) {
 		Debug.Log (player.name + " died! Respawning in 1 second...");
-		RpcRespawn (player);
+		Respawn (player);
 	}
-
-	[ClientRpc]
-	public void RpcRespawn(GameObject player) {
-		if (!isLocalPlayer)
+		
+	//[ClientRpc]
+	public void Respawn(GameObject player) {
+		if (!isServer)
 			return;
 		player.GetComponent<Fighter> ().Revive ();
 		player.SetActive (false);
