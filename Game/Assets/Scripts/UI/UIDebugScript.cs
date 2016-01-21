@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class UIDebugScript : MonoBehaviour
-{
+public class UIDebugScript : MonoBehaviour {
 
 	static UILabel label;
 

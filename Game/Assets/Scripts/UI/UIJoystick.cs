@@ -24,6 +24,12 @@ public class UIJoystick : MonoBehaviour
     Vector2 lastPosition;
     float radius;
 
+	//Emulate on Keyboard
+	public KeyCode leftKey;
+	public KeyCode rightKey;
+	public KeyCode upKey;
+	public KeyCode downKey;
+
     void OnEnable()
     {
         widget = GetComponent<UIWidget>();
@@ -84,7 +90,7 @@ public class UIJoystick : MonoBehaviour
             EmulateKeyboard();
         }
 
-        if (isPressed)
+		if (isPressed)
         {
             innerPosition = UICamera.GetTouch(touchId).pos;
 
@@ -102,27 +108,30 @@ public class UIJoystick : MonoBehaviour
         bool isKeyboardInput = false;
         Vector2 keyboardDelta = Vector2.zero;
 
-        if (Input.GetKey(KeyCode.W))
+		if (Input.GetKey(upKey))
         {
+			//isPressed = true;//
             keyboardDelta += new Vector2(0, 1);
             isKeyboardInput = true;
         }
-        if (Input.GetKey(KeyCode.S))
+		if (Input.GetKey(downKey))
         {
+			//isPressed = true;//
             keyboardDelta += new Vector2(0, -1);
             isKeyboardInput = true;
         }
-        if (Input.GetKey(KeyCode.D))
+		if (Input.GetKey(rightKey))
         {
+			//isPressed = true;//
             keyboardDelta += new Vector2(1, 0);
             isKeyboardInput = true;
         }
-        if (Input.GetKey(KeyCode.A))
+		if (Input.GetKey(leftKey))
         {
+			//isPressed = true;//
             keyboardDelta += new Vector2(-1, 0);
             isKeyboardInput = true;
         }
-
         if (isKeyboardInput == true)
         {
             innerPosition = centerPosition + keyboardDelta * radius;
@@ -133,6 +142,7 @@ public class UIJoystick : MonoBehaviour
             if (lastKeyboardInput == true)
             {
                 // Release joystick.
+				//isPressed = false;//
                 ClearPosition();
             }
         }
