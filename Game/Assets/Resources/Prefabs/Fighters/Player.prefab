@@ -489,6 +489,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbdf165434a074185b62bde481d578a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hit: {fileID: 11442620}
 --- !u!114 &11496440
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -532,8 +533,8 @@ MonoBehaviour:
   m_Script: {fileID: -1768714887, guid: 870353891bb340e2b2a9c8707e7419ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_TransformSyncMode: 2
-  m_SendInterval: 0.05
+  m_TransformSyncMode: 1
+  m_SendInterval: 0.09090909
   m_SyncRotationAxis: 7
   m_RotationSyncCompression: 0
   m_SyncSpin: 0

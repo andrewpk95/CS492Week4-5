@@ -72,13 +72,14 @@ public class FighterController : NetworkBehaviour, Fighter {
 	// Use this for initialization
 	void Start () {
 		//Initialize
+		anim = GetComponent<Animator> ();
+		sprite = GetComponent<SpriteRenderer> ();
 		if (!isServer)
 			return;
 		rb = GetComponent<Rigidbody2D> ();
 		GameObject g_logic = GameObject.FindGameObjectWithTag ("Logic");
 		logic = g_logic.GetComponent<GameLogic> ();
-		anim = GetComponent<Animator> ();
-		sprite = GetComponent<SpriteRenderer> ();
+
 
 		//Add to the PlayerContainer Object
 		//player = PlayerContainer.Add (this);
@@ -526,6 +527,16 @@ public class FighterController : NetworkBehaviour, Fighter {
 	}
 
 	void Flip() {
+		if (isFacingRight) {
+			transform.rotation = Quaternion.Euler (Vector3.zero);
+		} else {
+			transform.rotation = Quaternion.Euler (Vector3.down * 180f);
+		}
+		RpcFlip ();
+	}
+
+	[ClientRpc]
+	void RpcFlip() {
 		if (isFacingRight) {
 			transform.rotation = Quaternion.Euler (Vector3.zero);
 		} else {

@@ -7,7 +7,7 @@ public class PercentDisplayer : NetworkBehaviour {
 	//Components
 	Fighter fighter;
 	Player player;
-	HitController hit;
+	public HitController hit;
 	UIPercentage UI;
 
 	// Use this for initialization
