@@ -22,6 +22,6 @@ public class ShieldDisplayer : NetworkBehaviour {
 	[ClientRpc]
 	void RpcDraw(float health, float scale) {
 		controller.health = health;
-		shield.transform.localScale = new Vector3 (1.5f * scale, 1.5f * scale, 1f);
+		shield.transform.localScale = new Vector3 (scale, scale, 1f);
 	}
 }

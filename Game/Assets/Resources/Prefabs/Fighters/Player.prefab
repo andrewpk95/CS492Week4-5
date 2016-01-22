@@ -97,7 +97,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 430686}
   - 212: {fileID: 21282026}
-  - 58: {fileID: 5844398}
+  - 58: {fileID: 5878924}
   m_Layer: 0
   m_Name: Sprite
   m_TagString: Shield
@@ -201,7 +201,7 @@ Transform:
   m_GameObject: {fileID: 166348}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.5, y: 1.5, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 482614}
   m_RootOrder: 0
@@ -299,7 +299,7 @@ CircleCollider2D:
   m_Offset: {x: 0.15, y: 0.15}
   serializedVersion: 2
   m_Radius: 0.08
---- !u!58 &5844398
+--- !u!58 &5878924
 CircleCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -312,7 +312,7 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.09
+  m_Radius: 0.15375
 --- !u!61 &6189872
 BoxCollider2D:
   m_ObjectHideFlags: 1
@@ -374,6 +374,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14b8b9758d5d14f8bbcb3eb695a47fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  HitEffect: {fileID: 190192, guid: d78444703e3c5407eacee9025027f817, type: 2}
   hitBoxFrame: 5
   frameLeft: 0
   damage: 15
@@ -399,8 +400,8 @@ MonoBehaviour:
   isDummy: 0
   player: 0
   characterName: Mario
-  anim: {fileID: 0}
-  sprite: {fileID: 0}
+  anim: {fileID: 9536192}
+  sprite: {fileID: 21258156}
   isFacingRight: 0
   isDead: 0
   isWalking: 0
@@ -533,12 +534,12 @@ MonoBehaviour:
   m_Script: {fileID: -1768714887, guid: 870353891bb340e2b2a9c8707e7419ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_TransformSyncMode: 1
-  m_SendInterval: 0.09090909
+  m_TransformSyncMode: 2
+  m_SendInterval: 0.033333335
   m_SyncRotationAxis: 7
   m_RotationSyncCompression: 0
   m_SyncSpin: 0
-  m_MovementTheshold: 0.001
+  m_MovementTheshold: 0
   m_SnapThreshold: 0.1
   m_InterpolateRotation: 1
   m_InterpolateMovement: 1
@@ -628,7 +629,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 350559817
   m_SortingOrder: 0
-  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: 3b9c62f7341874a16bae3e8a5e3e64df, type: 3}
   m_Color: {r: 0.97794116, g: 0.4817798, b: 0.4817798, a: 0.584}
   m_FlipX: 0
   m_FlipY: 0

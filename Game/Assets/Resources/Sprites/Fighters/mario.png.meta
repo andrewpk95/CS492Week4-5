@@ -264,7 +264,7 @@ TextureImporter:
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
-    enableMipMap: 1
+    enableMipMap: 0
     linearTexture: 0
     correctGamma: 0
     fadeOut: 0
@@ -2067,10 +2067,10 @@ TextureImporter:
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline:
-      - - {x: -114.72656, y: 71.99463}
-        - {x: -114.72656, y: -0.0053710938}
-        - {x: 116.27344, y: -0.0053710938}
-        - {x: 116.27344, y: 71.99463}
+      - - {x: -57.55197, y: 36.07834}
+        - {x: -57.55197, y: 0.07833862}
+        - {x: 58.44803, y: 0.07833862}
+        - {x: 58.44803, y: 36.07834}
     - name: mario_273
       rect:
         serializedVersion: 2

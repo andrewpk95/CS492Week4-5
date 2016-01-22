@@ -1,43 +1,42 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class MarioSideSmash : MonoBehaviour {
+public class HitBox : MonoBehaviour {
 
 	public GameObject HitEffect;
+	public GameObject Owner;
 
-	public int hitBoxFrame = 5;
+	public int hitBoxFrame;
 	public int frameLeft;
 
-	public float damage = 15f;
-	public float hitStunDuration = 0.5f;
-	public float baseKnockback = 1f;
-	public float knockbackGrowth = 0.1f;
+	public float damage;
+	public float hitStunDuration;
+	public float baseKnockback;
+	public float knockbackGrowth;
 
-	public float shieldDamage = 10f;
-	public float shieldHitStunDuration = 0.1f;
-	public float shieldKnockback = 1f;
-
-	/*
-	void OnEnable() {
-		frameLeft = hitBoxFrame;
-	}
+	public float shieldDamage;
+	public float shieldHitStunDuration;
+	public float shieldKnockback;
 
 	void Start() {
-		
+		frameLeft = hitBoxFrame;
 	}
 
 	void FixedUpdate() {
 		frameLeft--;
 		if (frameLeft <= 0) {
-			this.gameObject.SetActive (false);
+			Destroy (this.gameObject);
 		}
 	}
-	*/
+
 
 	void OnTriggerEnter2D(Collider2D col)
 	{
 		//if (!isServer)
-			//return;
+		//return;
+		if (GameObject.ReferenceEquals (col.gameObject, Owner)) {
+			return;
+		}
 		if (col.gameObject.tag == "Shield") {
 			Fighter player = GetComponentInParent<Fighter> ();
 			ShieldController target = col.gameObject.GetComponentInParent<ShieldController> ();

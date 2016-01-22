@@ -5,6 +5,7 @@ using System.Collections;
 public class PlayerInput : NetworkBehaviour {
 
 	public GameObject Mario;
+	public GameObject Inkachu;
 
 	public GameInputManager inputManager;
 	[SyncVar] public Player player;
@@ -35,6 +36,7 @@ public class PlayerInput : NetworkBehaviour {
 	[Command]
 	void CmdAdd() {
 		g_fighter = (GameObject)Instantiate (Mario);
+		//g_fighter = (GameObject)Instantiate (Inkachu);
 		fighter = g_fighter.GetComponent<Fighter> ();
 		player = PlayerContainer.Add (fighter);
 		this.gameObject.name = player.ToString ();

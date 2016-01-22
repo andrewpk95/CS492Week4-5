@@ -138,7 +138,7 @@ public class FighterController : NetworkBehaviour, Fighter {
 
 	void UpdateAttack() {
 		//Update Attack input
-		anim.SetTrigger("Attack");
+		//anim.SetTrigger("Attack");
 		if (isGrounded) { //Ground Moves
 			if (Input.inputType == InputType.AttackStrong) { //Smash Attacks
 				Input.Reset();
@@ -200,11 +200,13 @@ public class FighterController : NetworkBehaviour, Fighter {
 	void LeftSideSmash() {
 		Debug.Log (playerName + "'s Left Side Smash!");
 		anim.SetTrigger ("SideSmash");
+		RpcAnim ("SideSmash");
 	}
 
 	void RightSideSmash() {
 		Debug.Log (playerName + "'s Right Side Smash!");
 		anim.SetTrigger ("SideSmash");
+		RpcAnim ("SideSmash");
 	}
 
 	void UpSmash() {
@@ -300,6 +302,7 @@ public class FighterController : NetworkBehaviour, Fighter {
 	void RollForward() {
 		Debug.Log (playerName + "'s Forward Roll!");
 		anim.SetTrigger ("RollForward");
+		RpcAnim ("RollForward");
 		int modifier = isFacingRight ? 1 : -1;
 		velocity.x = rollImpulse * modifier;
 	}
@@ -307,6 +310,7 @@ public class FighterController : NetworkBehaviour, Fighter {
 	void RollBackward() {
 		Debug.Log (playerName + "'s Backward Roll!");
 		anim.SetTrigger ("RollBackward");
+		RpcAnim ("RollBackward");
 		int modifier = isFacingRight ? -1 : 1;
 		velocity.x = rollImpulse * modifier;
 	}
@@ -314,11 +318,13 @@ public class FighterController : NetworkBehaviour, Fighter {
 	void SideDodge() {
 		Debug.Log (playerName + "'s Side Dodge!");
 		anim.SetTrigger ("SideDodge");
+		RpcAnim ("SideDodge");
 	}
 
 	void AirDodge() {
 		Debug.Log (playerName + "'s Air Dodge!");
 		anim.SetTrigger ("AirDodge");
+		RpcAnim ("AirDodge");
 	}
 
 	void UpdateJump() {
@@ -336,7 +342,9 @@ public class FighterController : NetworkBehaviour, Fighter {
 		if (isGrounded) { //Single Jump
 			Debug.Log (playerName + "'s Jump!");
 			anim.SetTrigger ("Jump");
+			RpcAnim ("Jump");
 			anim.SetTrigger ("SingleJump");
+			RpcAnim ("SingleJump");
 			isGrounded = false;
 			isJumping = true;
 			isFalling = false;
@@ -344,6 +352,7 @@ public class FighterController : NetworkBehaviour, Fighter {
 		} else if (!isDoubleJumping) { //Double Jump
 			Debug.Log (playerName + "'s Double Jump!");
 			anim.SetTrigger ("DoubleJump");
+			RpcAnim ("DoubleJump");
 			isDoubleJumping = true;
 			isFalling = false;
 			velocity.y = doubleJumpImpulse;
@@ -365,6 +374,7 @@ public class FighterController : NetworkBehaviour, Fighter {
 					Dash ();
 				} else {
 					anim.SetTrigger ("Idle");
+					RpcAnim ("Idle");
 					Stop ();
 				}
 			} else {
@@ -372,6 +382,7 @@ public class FighterController : NetworkBehaviour, Fighter {
 					
 				} else if (isBusy) {
 					anim.SetTrigger ("Idle");
+					RpcAnim ("Idle");
 				}
 				Stop ();
 			}
@@ -387,6 +398,7 @@ public class FighterController : NetworkBehaviour, Fighter {
 					
 				} else if (isBusy) {
 					anim.SetTrigger ("Idle");
+					RpcAnim ("Idle");
 				}
 				AirStop ();
 			}
@@ -461,6 +473,7 @@ public class FighterController : NetworkBehaviour, Fighter {
 
 	void Walk() {
 		anim.SetTrigger ("Walk");
+		RpcAnim ("Walk");
 		newVelocity.x += acceleration * Input.JoystickPosition.x;
 		float clampWalkSpeed = walkSpeed * Mathf.Abs (Input.JoystickPosition.x);
 		newVelocity.x = Mathf.Clamp (newVelocity.x, -clampWalkSpeed, clampWalkSpeed);
@@ -474,6 +487,7 @@ public class FighterController : NetworkBehaviour, Fighter {
 
 	void Dash() {
 		anim.SetTrigger ("Dash");
+		RpcAnim ("Dash");
 		int modifier = Input.JoystickPosition.x > 0 ? 1 : -1;
 		if ((modifier > 0 && velocity.x < 0) || (modifier < 0 && velocity.x > 0)) {
 			newVelocity.x += deceleration * modifier;
@@ -519,6 +533,11 @@ public class FighterController : NetworkBehaviour, Fighter {
 		anim.SetBool ("isFalling", isFalling);
 		anim.SetBool ("isHitStunned", isHitStunned);
 		anim.SetBool ("isGuarding", isGuarding);
+	}
+
+	[ClientRpc]
+	void RpcAnim(string trigger) {
+		anim.SetTrigger (trigger);
 	}
 
 	void OnApplicationQuit() {
