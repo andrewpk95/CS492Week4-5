@@ -61,6 +61,7 @@ public class ChatFragment extends Fragment {
     //Added
     private String TAG = "ChatFragment";
     private ImageButton send;
+    private ImageButton play;
 
     @Override
     public void onAttach(Activity activity) {
@@ -80,6 +81,7 @@ public class ChatFragment extends Fragment {
         mSocket.on("user left", onUserLeft);
         mSocket.on("typing", onTyping);
         mSocket.on("stop typing", onStopTyping);
+        mSocket.on("play response", onPlay);
         mSocket.connect();
 
         startSignIn();
@@ -102,6 +104,7 @@ public class ChatFragment extends Fragment {
         mSocket.off("user left", onUserLeft);
         mSocket.off("typing", onTyping);
         mSocket.off("stop typing", onStopTyping);
+        mSocket.off("play response", onPlay);
     }
 
     @Override
@@ -152,6 +155,14 @@ public class ChatFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 attemptSend();
+            }
+        });
+
+        play = (ImageButton) view.findViewById(R.id.play_button);
+        play.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                attempPlay();
             }
         });
     }
@@ -262,6 +273,22 @@ public class ChatFragment extends Fragment {
         mSocket.emit("new message", message);
     }
 
+    private void attempPlay(){
+        if (null == mUsername) return;
+        if (!mSocket.connected()) return;
+
+        JSONObject play = new JSONObject();
+        try {
+            play.put("room", mPosition);
+            play.put("username", mUsername);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        mSocket.emit("play request", play);
+        //call the unity application package
+    }
+
     private void startSignIn() {
         mUsername = null;
         Intent intent = new Intent(getActivity(), LoginActivity.class);
@@ -287,6 +314,30 @@ public class ChatFragment extends Fragment {
                 public void run() {
                     Toast.makeText(getActivity().getApplicationContext(),
                             R.string.error_connect, Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener onPlay = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    //call the unity application package
+//                    JSONObject data = (JSONObject) args[0];
+//                    String username;
+//                    String message;
+//                    try {
+//                        username = data.getString("username");
+//                        message = data.getString("message");
+//                    } catch (JSONException e) {
+//                        return;
+//                    }
+//
+//                    removeTyping(username);
+//                    addMessage(username, message);
                 }
             });
         }
