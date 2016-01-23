@@ -199,15 +199,16 @@ public class ImgFragment extends Fragment {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.i(TAG, "onItemClick Listener");
+                //Log.i(TAG, "onItemClick Listener");
                 ListItem item = (ListItem)parent.getItemAtPosition(position);
-                Log.i(TAG, "user " + item.getAuthor() + " Img_url " + item.getImg_url() + " filename " + item.getFileName());
+//                Log.i(TAG, "user " + item.getAuthor() + " Img_url " + item.getImg_url() + " filename " + item.getFileName());
                 Intent slide = new Intent(mContext, ImgSlideActivity.class);
                 Bundle info_item = new Bundle();
                 info_item.putString("position", item.getRoomnumber());
                 info_item.putString("username", item.getAuthor());
                 info_item.putString("filename", item.getFileName());
                 info_item.putString("timestamp", item.getTimestamp());
+                info_item.putString("replyuser", mUsername);
                 slide.putExtras(info_item);
                 startActivity(slide);
             }
@@ -246,7 +247,7 @@ public class ImgFragment extends Fragment {
 
                 mSocket.emit("imagelist", json_data);
 
-                Log.i(TAG, "mUsername : " + mUsername + " mPosition : " + mPosition);
+//                Log.i(TAG, "mUsername : " + mUsername + " mPosition : " + mPosition);
             }
             return;
         }
@@ -338,7 +339,7 @@ public class ImgFragment extends Fragment {
             Bitmap bitmap = null;
             InputStream in = null;
 
-            Log.i(TAG, "LoadImage URL " + URL);
+//            Log.i(TAG, "LoadImage URL " + URL);
             try{
                 in = OpenHttpConnection(URL);
                 bitmap = BitmapFactory.decodeStream(in);
@@ -413,7 +414,7 @@ public class ImgFragment extends Fragment {
 
             switch(msg.what){
                 case FEED_LISTVIEW:
-                    Log.i(TAG, listItems.toString());
+//                    Log.i(TAG, listItems.toString());
 
                     ArrayList<ListItem> srcList = new ArrayList<ListItem>(Arrays.asList(listItems));
                     lv.setAdapter(new CustomListAdapter(mContext, srcList));
@@ -434,7 +435,7 @@ public class ImgFragment extends Fragment {
             img_info_http.put("username", mUsername);
             img_info_http.put("position", mPosition);
             img_info_http.put("time", currentTime);
-            Log.i(TAG, "HttpConnect " + currentTime);
+//            Log.i(TAG, "HttpConnect " + currentTime);
             //it is possible to extract the image name on server, so do not including the file name
             json_data = new GsonBuilder().create().toJson(img_info_http, Map.class);
 

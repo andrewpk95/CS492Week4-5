@@ -22,8 +22,9 @@
         android:layout_height="match_parent"
         android:layout_below="@id/imageView"
         android:weightSum="15">
+
         <EditText
-            android:id="@+id/reply_input"
+            android:id="@+id/reply_input_msg"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="13"
@@ -45,13 +46,13 @@
             android:contentDescription="@string/action_send"/>
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/replyList"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/container">
+    <!--<ListView-->
+        <!--android:id="@+id/replyList"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@id/container">-->
 
-    </ListView>
+    <!--</ListView>-->
 
 </RelativeLayout>
 </ScrollView>
