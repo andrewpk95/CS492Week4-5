@@ -6,34 +6,6 @@
     android:layout_height="match_parent"
     android:paddingTop="@dimen/spacing">
 
-
-    <TextView
-        android:id="@+id/author_name"
-        style="?android:textAppearanceMedium"
-        android:textColor="?android:textColorPrimary"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:textStyle="bold"/>
-
-    <TextView
-        android:id="@+id/file_name"
-        style="?android:textAppearanceMedium"
-        android:textColor="?android:textColorPrimary"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:textStyle="bold"/>
-
-    <TextView
-        android:id="@+id/when_upload"
-        style="?android:textAppearanceMedium"
-        android:textColor="?android:textColorPrimary"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:textStyle="bold"/>
-
     <ImageView
         android:id="@+id/picture"
         style="?android:textAppearanceMedium"

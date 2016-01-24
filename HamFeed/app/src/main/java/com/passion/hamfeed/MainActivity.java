@@ -39,6 +39,9 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private static RelativeLayout frag_con;
 
+    private ChatFragment chatFragment;
+    private ImgFragment imgFragment;
+
     private static final String TAG = "MainActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +63,9 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Play Game with your friends sending request", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                chatFragment.attempPlay();
             }
         });
 
@@ -84,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_leave) {
+            chatFragment.leave();
             return true;
         }
 
@@ -149,9 +154,11 @@ public class MainActivity extends AppCompatActivity {
             // Return a PlaceholderFragment (defined as a static inner class below).
             switch(position){
                 case 0:
-                    return new ChatFragment();
+                    chatFragment = new ChatFragment();
+                    return chatFragment;
                 case 1:
-                    return new ImgFragment();
+                    imgFragment = new ImgFragment();
+                    return imgFragment;
                 //or side menu is better??
             }
             return PlaceholderFragment.newInstance(position + 1);

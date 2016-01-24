@@ -4,6 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingBottom="56dp"
     tools:context=".ChatFragment">
 
     <android.support.v7.widget.RecyclerView
@@ -23,12 +24,6 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:orientation="horizontal"
         android:gravity="center_vertical">
-        <ImageButton
-            android:id="@+id/play_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/play_button"
-            android:contentDescription="@string/action_send"/>
         <EditText
             android:id="@+id/message_input"
             android:layout_width="0dp"

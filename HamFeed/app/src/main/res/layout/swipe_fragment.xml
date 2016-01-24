@@ -66,6 +66,17 @@
                 android:layout_toRightOf="@id/indicate_time"
                 android:singleLine="true"
                 android:text="@string/timestamp"/>
+
+            <Button
+                android:id="@+id/webViewBtn"
+                android:text="@string/WEB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:hint="@string/magnify"/>
         </RelativeLayout>
 
 
@@ -106,5 +117,6 @@
                 android:src="@android:drawable/ic_menu_send"
                 android:contentDescription="@string/action_send"/>
         </LinearLayout>
+
     </RelativeLayout>
 </ScrollView>

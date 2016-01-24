@@ -61,7 +61,7 @@ public class ChatFragment extends Fragment {
     //Added
     private String TAG = "ChatFragment";
     private ImageButton send;
-    private ImageButton play;
+    private boolean is_first = true;
 
     @Override
     public void onAttach(Activity activity) {
@@ -158,13 +158,6 @@ public class ChatFragment extends Fragment {
             }
         });
 
-        play = (ImageButton) view.findViewById(R.id.play_button);
-        play.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                attempPlay();
-            }
-        });
     }
 
     @Override
@@ -185,8 +178,11 @@ public class ChatFragment extends Fragment {
             return;
         }
 
-        addLog(getResources().getString(R.string.message_welcome));
-        addParticipantsLog(numUsers);
+        Log.i(TAG, "웰컴로그가 2번나오는 것 같은데 왜 그런가요?" + requestCode + " result " + resultCode);
+        if(requestCode == Constants.REQUEST_LOGIN) {
+            addLog(getResources().getString(R.string.message_welcome));
+            addParticipantsLog(numUsers);
+        }
     }
 
     @Override
@@ -199,11 +195,11 @@ public class ChatFragment extends Fragment {
         super.onPause();
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        inflater.inflate(R.menu.menu_main, menu);
-    }
+//    @Override
+//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        inflater.inflate(R.menu.menu_main, menu);
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -273,7 +269,7 @@ public class ChatFragment extends Fragment {
         mSocket.emit("new message", message);
     }
 
-    private void attempPlay(){
+    public void attempPlay(){
         if (null == mUsername) return;
         if (!mSocket.connected()) return;
 
@@ -290,12 +286,12 @@ public class ChatFragment extends Fragment {
     }
 
     private void startSignIn() {
-        mUsername = null;
+        mUsername = null; mPosition = null;
         Intent intent = new Intent(getActivity(), LoginActivity.class);
         startActivityForResult(intent, Constants.REQUEST_LOGIN);
     }
 
-    private void leave() {
+    public void leave() {
         mUsername = null;
         mSocket.disconnect();
         mSocket.connect();
@@ -326,6 +322,7 @@ public class ChatFragment extends Fragment {
                 @Override
                 public void run() {
                     //call the unity application package
+                    //Make dialog to be invited by the game invitation, debug is not possilbe
 //                    JSONObject data = (JSONObject) args[0];
 //                    String username;
 //                    String message;

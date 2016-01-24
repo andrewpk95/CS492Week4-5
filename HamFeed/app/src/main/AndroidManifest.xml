@@ -30,6 +30,9 @@
         <activity
             android:name="com.passion.hamfeed.ImgSlideActivity">
         </activity>
+        <activity
+            android:name="com.passion.hamfeed.WebViewActivity">
+        </activity>
     </application>
 
 </manifest>

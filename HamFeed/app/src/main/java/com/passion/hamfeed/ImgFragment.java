@@ -27,6 +27,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.GsonBuilder;
@@ -171,6 +172,7 @@ public class ImgFragment extends Fragment {
 
                     //send the file to server
                     File img_file = new File(img_path);
+                    
 
                     Future uploading = Ion.with(getContext())
                             .load(Constants.IMG_SERVER_URL)
@@ -189,6 +191,9 @@ public class ImgFragment extends Fragment {
                                     }
                                 }
                             });
+
+                    sendRequest();
+                    img_file = null;
                 }
             }
         });
@@ -213,11 +218,7 @@ public class ImgFragment extends Fragment {
                 startActivity(slide);
             }
         });
-//        ArrayList<ListItem> srcList = new ArrayList<ListItem>(Arrays.asList(listItems));
-//        lv.setAdapter(new CustomListAdapter(getContext(), srcList));
     }
-
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -254,6 +255,20 @@ public class ImgFragment extends Fragment {
 
         img_path = getPathFromURI(data.getData());
         show_img.setImageURI(data.getData());
+    }
+
+    public void sendRequest(){
+        if(mUsername != null & mPosition != null) {
+            JSONObject json_data = new JSONObject();
+
+            try {
+                json_data.put("position", mPosition);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            mSocket.emit("imagelist", json_data);
+        }
     }
 
     @Override
@@ -399,10 +414,16 @@ public class ImgFragment extends Fragment {
         public View getView(int position, View convertView, ViewGroup parent) {
             View rowView = layoutInflater.inflate(R.layout.item_list, parent, false);
             ImageView icon = (ImageView)rowView.findViewById(R.id.icon);
+            TextView user = (TextView)rowView.findViewById(R.id.user);
+            TextView time = (TextView)rowView.findViewById(R.id.timestamp);
 
             if(icon != null){
                 new LoadImgTask(icon).execute(listData.get(position).getImg_url());
             }
+
+            user.setText(listData.get(position).getAuthor());
+            time.setText(listData.get(position).getTimestamp());
+
             return rowView;
         }
     }

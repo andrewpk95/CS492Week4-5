@@ -1,5 +1,7 @@
 package com.passion.hamfeed;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.*;
@@ -16,13 +18,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
+import com.viewpagerindicator.CirclePageIndicator;
+import com.viewpagerindicator.TitlePageIndicator;
+import com.viewpagerindicator.UnderlinePageIndicator;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -76,12 +83,17 @@ public class ImgSlideActivity extends FragmentActivity {
     private final int REPLY = 1;
     private static final int SEND_LIST_FEED = 2;
 
+    private static Button webView;
+    private TitlePageIndicator mIndicator;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_page);
         imageFragmentPagerAdapter = new ImageFragmentPagerAdapter(getSupportFragmentManager());
         viewPager = (ViewPager)findViewById(R.id.pager);
+        mIndicator = (TitlePageIndicator)findViewById(R.id.indicator);
 
         mContext = getApplicationContext();
         sendRequest();
@@ -218,6 +230,21 @@ public class ImgSlideActivity extends FragmentActivity {
                     showDialog(card_position);
                 }
             });
+
+            webView = (Button)swipeView.findViewById(R.id.webViewBtn);
+            webView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ClipboardManager clipboardManager = (ClipboardManager)getActivity().getSystemService(CLIPBOARD_SERVICE);
+                    ClipData clipData = ClipData.newPlainText("url", list_item[card_position].getImg_url());
+                    clipboardManager.setPrimaryClip(clipData);
+                    Toast.makeText(getContext(), "Web address is copied on Clipboard", Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(getContext(), WebViewActivity.class);
+                    intent.putExtra("URL", list_item[card_position].getImg_url());
+                    startActivity(intent);
+                }
+            });
             return swipeView;
         }
 
@@ -314,6 +341,7 @@ public class ImgSlideActivity extends FragmentActivity {
 //                    lv.setAdapter(new CustomListAdapter(mContext, srcList));
                 case FEED:
                     viewPager.setAdapter(imageFragmentPagerAdapter);
+                    mIndicator.setViewPager(viewPager);
                     break;
                 case REPLY:
                     Log.i(TAG, "reply view is updated");

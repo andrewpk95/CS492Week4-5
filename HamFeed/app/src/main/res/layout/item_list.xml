@@ -16,14 +16,35 @@
         />
 
     <TextView
-        android:id="@+id/user"
+        android:id="@+id/indicate_u"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/icon"
         android:layout_toRightOf="@+id/icon"
-        android:text="A List item title"
+        android:text="@string/indicate_username"
         android:textSize="16sp"
         android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/user"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/icon"
+        android:layout_toRightOf="@+id/indicate_u"
+        android:text="@string/username"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/indicate_t"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/user"
+        android:layout_marginTop="5dp"
+        android:maxLines="4"
+        android:layout_toRightOf="@+id/icon"
+        android:text="@string/last_update"
+        android:textSize="14sp"/>
 
     <TextView
         android:id="@+id/timestamp"
@@ -32,8 +53,8 @@
         android:layout_below="@+id/user"
         android:layout_marginTop="5dp"
         android:maxLines="4"
-        android:layout_toRightOf="@+id/icon"
-        android:text="The List item description"
+        android:layout_toRightOf="@+id/indicate_t"
+        android:text="@string/timestamp"
         android:textSize="14sp"/>
 
 </RelativeLayout>
