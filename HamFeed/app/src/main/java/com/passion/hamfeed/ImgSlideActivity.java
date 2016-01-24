@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
@@ -141,7 +142,7 @@ public class ImgSlideActivity extends FragmentActivity {
 
                 try {
                     JSONObject json = data_arr.getJSONObject(i);
-//                    Log.i(TAG, i + " 번째 " + json.toString());
+                    Log.i(TAG, i + " 번째 " + json.toString());
                     list_item[index - i].setAuthor(json.getString("username"));
                     list_item[index - i].setImg_url(json.getString("html_addr"));
                     img_urls[index - i] = json.getString("html_addr");
@@ -174,6 +175,10 @@ public class ImgSlideActivity extends FragmentActivity {
     }
 
     public static class SwipeFragment extends Fragment{
+        private TextView author;
+        private TextView file;
+        private TextView time;
+
         private ImageButton reply_button;
         private EditText reply;
         private ListView reply_lv;
@@ -198,6 +203,14 @@ public class ImgSlideActivity extends FragmentActivity {
 //            Log.i(TAG, " " + card_position);
             //loading image from server
             Picasso.with(mContext).load(img_urls[card_position]).into(imageView);
+
+            author = (TextView)swipeView.findViewById(R.id.author_name);
+            file = (TextView)swipeView.findViewById(R.id.file_name);
+            time = (TextView)swipeView.findViewById(R.id.when_upload);
+
+            author.setText(list_item[card_position].getAuthor());
+            file.setText(list_item[card_position].getFileName());
+            time.setText(list_item[card_position].getTimestamp());
 
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -31,4 +31,9 @@
     <string name="time_out">Time Out</string>
     <string name="error_occured">Error Occurred</string>
     <string name="prompt_reply">Comment</string>
+    <string name="space">\u00A0</string>
+
+    <string name="indicate_username">USER : </string>
+    <string name="indicate_filename">FILE : </string>
+    <string name="indicate_timestamp">TIMESTAMP : </string>
 </resources>
