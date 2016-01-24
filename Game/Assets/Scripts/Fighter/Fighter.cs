@@ -7,6 +7,8 @@ public interface Fighter {
 
 	void SetPlayer (Player pl);
 
+	void SetLocalClient (bool local);
+
 	void HitStun(float duration);
 
 	void ShieldStun(float duration);
@@ -20,6 +22,8 @@ public interface Fighter {
 	string getName();
 
 	void setName(string name);
+
+	Transform getTransform ();
 
 	Player getPlayer();
 

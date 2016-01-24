@@ -5,6 +5,7 @@ using System.Collections;
 public class FighterController : NetworkBehaviour, Fighter {
 
 	public PlayerInput Input;
+	public bool isHost;
 
 	public float GRAVITY = 0.3f;
 
@@ -69,6 +70,10 @@ public class FighterController : NetworkBehaviour, Fighter {
 		player = pl;
 	}
 
+	public void SetLocalClient(bool local) {
+		isHost = local;
+	}
+
 	// Use this for initialization
 	void Start () {
 		//Initialize
@@ -119,6 +124,8 @@ public class FighterController : NetworkBehaviour, Fighter {
 				UpdateGuard ();
 				UpdateJump ();
 			}
+		} else {
+			Input.Reset ();
 		}
 	}
 
@@ -180,7 +187,7 @@ public class FighterController : NetworkBehaviour, Fighter {
 				Input.Reset();
 				float modifier = isFacingRight ? 1f : -1f;
 				Vector2 faceDirection = new Vector2 (modifier, 0f);
-				if (Input.inputDirection.x != 0) { 
+				if (Input.inputDirection.y == 0) { 
 					if (Input.inputDirection == faceDirection) { //Forward Air
 						ForwardAir ();
 					} else { //Back Air
@@ -211,10 +218,14 @@ public class FighterController : NetworkBehaviour, Fighter {
 
 	void UpSmash() {
 		Debug.Log (playerName + "'s Up Smash!");
+		anim.SetTrigger ("UpSmash");
+		RpcAnim ("UpSmash");
 	}
 
 	void DownSmash() {
 		Debug.Log (playerName + "'s Down Smash!");
+		anim.SetTrigger ("DownSmash");
+		RpcAnim ("DownSmash");
 	}
 
 	void LeftWeakAttack() {
@@ -239,22 +250,32 @@ public class FighterController : NetworkBehaviour, Fighter {
 
 	void NeutralAir() {
 		Debug.Log (playerName + "'s Neutral Air!");
+		anim.SetTrigger ("NeutralAir");
+		RpcAnim ("NeutralAir");
 	}
 
 	void ForwardAir() {
 		Debug.Log (playerName + "'s Forward Air!");
+		anim.SetTrigger ("ForwardAir");
+		RpcAnim ("ForwardAir");
 	}
 
 	void BackAir() {
 		Debug.Log (playerName + "'s Back Air!");
+		anim.SetTrigger ("BackAir");
+		RpcAnim ("BackAir");
 	}
 
 	void UpAir() {
 		Debug.Log (playerName + "'s Up Air!");
+		anim.SetTrigger ("UpAir");
+		RpcAnim ("UpAir");
 	}
 
 	void DownAir() {
 		Debug.Log (playerName + "'s Down Air!");
+		anim.SetTrigger ("DownAir");
+		RpcAnim ("DownAir");
 	}
 
 	void UpdateGuard() {
@@ -537,6 +558,8 @@ public class FighterController : NetworkBehaviour, Fighter {
 
 	[ClientRpc]
 	void RpcAnim(string trigger) {
+		if (isHost)
+			return;
 		anim.SetTrigger (trigger);
 	}
 
@@ -611,6 +634,10 @@ public class FighterController : NetworkBehaviour, Fighter {
 	public void setName(string name) {
 		this.gameObject.name = name;
 		playerName = name;
+	}
+
+	public Transform getTransform() {
+		return transform;
 	}
 
 	public Player getPlayer() {
