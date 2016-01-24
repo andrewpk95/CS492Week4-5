@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/pic_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            >
+
+            <TextView
+                android:id="@+id/indicate_username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:textStyle="bold"
+                android:text="@string/indicate_username"/>
+
+            <TextView
+                android:id="@+id/author_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/indicate_username"
+                android:singleLine="true"
+                android:text="@string/username"/>
+
+            <TextView
+                android:id="@+id/indicate_filename"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/author_name"
+                android:singleLine="true"
+                android:textStyle="bold"
+                android:text="@string/indicate_filename"/>
+
+            <TextView
+                android:id="@+id/file_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/author_name"
+                android:layout_toRightOf="@id/indicate_filename"
+                android:singleLine="true"
+                android:text="@string/filename"
+                />
+
+            <TextView
+                android:id="@+id/indicate_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/file_name"
+                android:singleLine="true"
+                android:textStyle="bold"
+                android:text="@string/indicate_timestamp"/>
+
+            <TextView
+                android:id="@+id/when_upload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/file_name"
+                android:layout_toRightOf="@id/indicate_time"
+                android:singleLine="true"
+                android:text="@string/timestamp"/>
+        </RelativeLayout>
+
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView"
+            android:layout_gravity="center_horizontal"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/pic_info"/>
+
+        <LinearLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/imageView"
+            android:weightSum="15">
+
+            <EditText
+                android:id="@+id/reply_input_msg"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="13"
+                android:hint="@string/prompt_reply"
+                android:imeActionId="@+id/send"
+                android:imeActionLabel="@string/action_send"
+                android:imeOptions="actionSend"
+                android:inputType="text"
+                android:maxLines="1"
+                android:singleLine="true"
+                />
+
+            <ImageButton
+                android:id="@+id/reply_button"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:layout_height="wrap_content"
+                android:src="@android:drawable/ic_menu_send"
+                android:contentDescription="@string/action_send"/>
+        </LinearLayout>
+    </RelativeLayout>
+</ScrollView>
