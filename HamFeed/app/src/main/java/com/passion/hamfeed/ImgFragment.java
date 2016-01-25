@@ -326,17 +326,6 @@ public class ImgFragment extends Fragment {
     public class LoadImgTask extends AsyncTask<String, Void, Bitmap>{
         private final WeakReference<ImageView> imageViewWeakReference;
         private String imageUrl;
-        private Bitmap compressed;
-
-//        private Runnable imgServerLoad = new Runnable() {
-//            @Override
-//            public void run() {
-//                Bitmap bitmap = BitmapFactory.decodeFile(img_path);
-//                CompressionThread ct = new CompressionThread(bitmap, img_path);
-//                ct.run();
-//                compressed = ct.getCompressed();
-//            }
-//        };
 
         public LoadImgTask(ImageView imageView) {
             imageViewWeakReference = new WeakReference<ImageView>(imageView);
@@ -366,20 +355,53 @@ public class ImgFragment extends Fragment {
         }
 
         private Bitmap LoadImage(String URL){
-            Bitmap bitmap = null;
+            Bitmap compressed = null;
             InputStream in = null;
 
             Log.i(TAG, "LoadImage URL " + URL);
             Log.i(TAG, "format : " + URL.substring(URL.lastIndexOf(".") + 1));
+            int inWidth = 0;
+            int inHeight = 0;
+
+            int dstWidth = 150;
+            int dstHeight = 150;
+
             try{
                 in = OpenHttpConnection(URL);
-                bitmap = BitmapFactory.decodeStream(in);
 
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = true;
+                Bitmap bitmap = BitmapFactory.decodeStream(in, null, options);
+                in.close();
+                in = null;
+
+                // save width and height
+                inWidth = options.outWidth;
+                inHeight = options.outHeight;
+
+                // decode full image pre-resized
+                in = OpenHttpConnection(URL);
+                options = new BitmapFactory.Options();
+                // calc rought re-size (this is no exact resize)
+                options.inSampleSize = Math.max(inWidth/dstWidth, inHeight/dstHeight);
+                // decode full image
+                Bitmap roughBitmap = BitmapFactory.decodeStream(in, null, options);
+
+                // calc exact destination size
+                Matrix m = new Matrix();
+                RectF inRect = new RectF(0, 0, roughBitmap.getWidth(), roughBitmap.getHeight());
+                RectF outRect = new RectF(0, 0, dstWidth, dstHeight);
+                m.setRectToRect(inRect, outRect, Matrix.ScaleToFit.CENTER);
+                float[] values = new float[9];
+                m.getValues(values);
+
+                // resize bitmap
+                compressed = Bitmap.createScaledBitmap(roughBitmap, (int) (roughBitmap.getWidth() * values[0]), (int) (roughBitmap.getHeight() * values[4]), true);
                 in.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return bitmap;
+            return compressed;
         }
 
         private InputStream OpenHttpConnection(String strURL) throws IOException{
@@ -549,11 +571,7 @@ public class ImgFragment extends Fragment {
 
                 InputStream in = null;
 
-                if(imgPath.matches("http:")){
-                    in = new URL(imgPath).openStream();
-                }else {
-                    in = new FileInputStream(imgPath);
-                }
+                in = new FileInputStream(imgPath);
 
                 // decode image size (decode metadata only, not the whole image)
                 BitmapFactory.Options options = new BitmapFactory.Options();
