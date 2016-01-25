@@ -36,7 +36,8 @@
         android:id="@+id/img_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/upload_img">
+        android:layout_below="@id/upload_img"
+        android:paddingBottom="56dp">
     </ListView>
 
 </RelativeLayout>

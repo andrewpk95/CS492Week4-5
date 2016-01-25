@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -39,13 +41,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -172,8 +173,8 @@ public class ImgFragment extends Fragment {
 
                     //send the file to server
                     File img_file = new File(img_path);
-                    
 
+                    //Compress the image
                     Future uploading = Ion.with(getContext())
                             .load(Constants.IMG_SERVER_URL)
                             .setMultipartFile("image", img_file)
@@ -254,7 +255,9 @@ public class ImgFragment extends Fragment {
         }
 
         img_path = getPathFromURI(data.getData());
-        show_img.setImageURI(data.getData());
+//        show_img.setImageURI(data.getData());
+        //change into bitmap and compress it
+        getActivity().runOnUiThread(imgLocalLoad);
     }
 
     public void sendRequest(){
@@ -323,6 +326,17 @@ public class ImgFragment extends Fragment {
     public class LoadImgTask extends AsyncTask<String, Void, Bitmap>{
         private final WeakReference<ImageView> imageViewWeakReference;
         private String imageUrl;
+        private Bitmap compressed;
+
+//        private Runnable imgServerLoad = new Runnable() {
+//            @Override
+//            public void run() {
+//                Bitmap bitmap = BitmapFactory.decodeFile(img_path);
+//                CompressionThread ct = new CompressionThread(bitmap, img_path);
+//                ct.run();
+//                compressed = ct.getCompressed();
+//            }
+//        };
 
         public LoadImgTask(ImageView imageView) {
             imageViewWeakReference = new WeakReference<ImageView>(imageView);
@@ -345,6 +359,7 @@ public class ImgFragment extends Fragment {
             if(imageViewWeakReference != null && bitmap != null){
                 final ImageView imageView = imageViewWeakReference.get();
                 if(imageView != null){
+//                    getActivity().runOnUiThread(imgServerLoad);
                     imageView.setImageBitmap(bitmap);
                 }
             }
@@ -354,10 +369,12 @@ public class ImgFragment extends Fragment {
             Bitmap bitmap = null;
             InputStream in = null;
 
-//            Log.i(TAG, "LoadImage URL " + URL);
+            Log.i(TAG, "LoadImage URL " + URL);
+            Log.i(TAG, "format : " + URL.substring(URL.lastIndexOf(".") + 1));
             try{
                 in = OpenHttpConnection(URL);
                 bitmap = BitmapFactory.decodeStream(in);
+
                 in.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -496,4 +513,98 @@ public class ImgFragment extends Fragment {
             return null;
         }
     }
+
+    class CompressionThread extends Thread{
+        private String imgPath;
+        private Bitmap original;
+        private Bitmap compressed;
+
+        public CompressionThread(Bitmap pOrigin, String path){
+            original = pOrigin;
+            imgPath = path;
+        }
+
+        @Override
+        public void run(){
+            super.run();
+            //compress the resolution
+            /*ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            if(imgPath.substring(imgPath.lastIndexOf(".") + 1).matches("PNG") ||
+                    imgPath.substring(imgPath.lastIndexOf(".") + 1).matches("png")){
+                original.compress(Bitmap.CompressFormat.PNG, 10, baos);
+            } else if(imgPath.substring(imgPath.lastIndexOf(".") + 1).matches("jpeg") ||
+                    imgPath.substring(imgPath.lastIndexOf(".") + 1).matches("jpg") ||
+                    imgPath.substring(imgPath.lastIndexOf(".") + 1).matches("JPEG") ||
+                    imgPath.substring(imgPath.lastIndexOf(".") + 1).matches("JPG")){
+                original.compress(Bitmap.CompressFormat.JPEG, 10, baos);
+            }
+            compressed = BitmapFactory.decodeStream(new ByteArrayInputStream(baos.toByteArray()));*/
+
+            try{
+                int inWidth = 0;
+                int inHeight = 0;
+
+                int dstWidth = 400;
+                int dstHeight = 400;
+
+                InputStream in = null;
+
+                if(imgPath.matches("http:")){
+                    in = new URL(imgPath).openStream();
+                }else {
+                    in = new FileInputStream(imgPath);
+                }
+
+                // decode image size (decode metadata only, not the whole image)
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = true;
+                BitmapFactory.decodeStream(in, null, options);
+                in.close();
+                in = null;
+
+                // save width and height
+                inWidth = options.outWidth;
+                inHeight = options.outHeight;
+
+                // decode full image pre-resized
+                in = new FileInputStream(imgPath);
+                options = new BitmapFactory.Options();
+                // calc rought re-size (this is no exact resize)
+                options.inSampleSize = Math.max(inWidth/dstWidth, inHeight/dstHeight);
+                // decode full image
+                Bitmap roughBitmap = BitmapFactory.decodeStream(in, null, options);
+
+                // calc exact destination size
+                Matrix m = new Matrix();
+                RectF inRect = new RectF(0, 0, roughBitmap.getWidth(), roughBitmap.getHeight());
+                RectF outRect = new RectF(0, 0, dstWidth, dstHeight);
+                m.setRectToRect(inRect, outRect, Matrix.ScaleToFit.CENTER);
+                float[] values = new float[9];
+                m.getValues(values);
+
+                // resize bitmap
+                compressed = Bitmap.createScaledBitmap(roughBitmap, (int) (roughBitmap.getWidth() * values[0]), (int) (roughBitmap.getHeight() * values[4]), true);
+
+            }
+            catch (IOException e)
+            {
+                Log.e("Image", e.getMessage(), e);
+            }
+        }
+
+        public Bitmap getCompressed(){
+            return compressed;
+        }
+    }
+
+    private Runnable imgLocalLoad = new Runnable() {
+        @Override
+        public void run() {
+            Bitmap bitmap = BitmapFactory.decodeFile(img_path);
+            CompressionThread ct = new CompressionThread(bitmap, img_path);
+            ct.run();
+            Bitmap decoded = ct.getCompressed();
+            show_img.setImageBitmap(decoded);
+        }
+    };
 }
