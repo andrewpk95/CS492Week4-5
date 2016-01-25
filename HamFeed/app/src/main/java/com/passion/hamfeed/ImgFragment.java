@@ -212,6 +212,7 @@ public class ImgFragment extends Fragment {
         }
 
         if(Constants.SELECT_IMG != requestCode){
+            sendRequest();
             if(mUsername == null & mPosition == null) {
                 mUsername = data.getStringExtra("username");
                 mPosition = data.getStringExtra("position");

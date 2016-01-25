@@ -1,6 +1,8 @@
 package com.passion.hamfeed;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -273,16 +275,36 @@ public class ChatFragment extends Fragment {
         if (null == mUsername) return;
         if (!mSocket.connected()) return;
 
-        JSONObject play = new JSONObject();
-        try {
-            play.put("room", mPosition);
-            play.put("username", mUsername);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        mSocket.emit("play request", play);
         //call the unity application package
+        DialogInterface.OnClickListener dialogClickListner = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch(which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        JSONObject play = new JSONObject();
+                        try {
+                            play.put("room", mPosition);
+                            play.put("username", mUsername);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        mSocket.emit("play request", play);
+
+                        Intent mapIntent = new Intent("com.madcamp.myapplication.MapsActivity");
+                        mapIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        getContext().startActivity(mapIntent);
+
+                        break;
+                    case DialogInterface.BUTTON_NEGATIVE:
+
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage("Do you want call your freinds?").setPositiveButton("Yes, call me", dialogClickListner)
+                .setNegativeButton("No, it was miss", dialogClickListner).show();
     }
 
     private void startSignIn() {

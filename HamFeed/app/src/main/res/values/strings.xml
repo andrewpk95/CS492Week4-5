@@ -38,5 +38,9 @@
     <string name="indicate_timestamp">TIMESTAMP:</string>
     <string name="last_update">LAST UP:</string>
     <string name="WEB">WEB</string>
-    <string name="magnify">MAGNIFY</string>
+    <string name="magnify">MAG</string>
+    <string name="modify">FIX</string>
+
+    <string name="action_clear">Clear</string>
+    <string name="action_save">Save</string>
 </resources>

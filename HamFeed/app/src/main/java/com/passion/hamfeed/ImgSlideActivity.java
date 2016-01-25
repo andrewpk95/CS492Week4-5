@@ -1,5 +1,6 @@
 package com.passion.hamfeed;
 
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -85,6 +86,7 @@ public class ImgSlideActivity extends FragmentActivity {
     private static final int SEND_LIST_FEED = 2;
 
     private static Button webView;
+    private static Button fixView;
     private TitlePageIndicator mIndicator;
 
 
@@ -129,6 +131,12 @@ public class ImgSlideActivity extends FragmentActivity {
         mSocket.emit("version", request);
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        sendRequest();
+    }
 
     @Override
     protected void onDestroy(){
@@ -253,6 +261,17 @@ public class ImgSlideActivity extends FragmentActivity {
 
                     Intent intent = new Intent(getContext(), WebViewActivity.class);
                     intent.putExtra("URL", list_item[card_position].getImg_url());
+                    startActivity(intent);
+                }
+            });
+
+            fixView = (Button)swipeView.findViewById(R.id.modifyViewBtn);
+            fixView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getContext(), ModifyActivity.class);
+                    intent.putExtra("modify", list_item[card_position]);
+                    intent.putExtra("modifyuser", reply_user);
                     startActivity(intent);
                 }
             });

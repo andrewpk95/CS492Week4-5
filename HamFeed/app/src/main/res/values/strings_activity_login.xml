@@ -7,4 +7,5 @@
     <string name="action_sign_in_short">Join</string>
 
     <string name="error_field_required">This field is required</string>
+    <string name="error_kor">Only Eng is allowed</string>
 </resources>
