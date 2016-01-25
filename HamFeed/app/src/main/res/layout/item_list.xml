@@ -22,7 +22,7 @@
         android:layout_alignTop="@+id/icon"
         android:layout_toRightOf="@+id/icon"
         android:text="@string/indicate_username"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:textStyle="bold"/>
 
     <TextView
@@ -32,26 +32,43 @@
         android:layout_alignTop="@+id/icon"
         android:layout_toRightOf="@+id/indicate_u"
         android:text="@string/username"
-        android:textSize="16sp"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/indicate_f"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/icon"
+        android:layout_below="@id/user"
+        android:text="@string/indicate_filename"
+        android:textSize="14sp"
         android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/file"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/indicate_f"
+        android:layout_below="@id/user"
+        android:text="@string/filename"
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/indicate_t"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/user"
-        android:layout_marginTop="5dp"
+        android:layout_below="@+id/file"
         android:maxLines="4"
         android:layout_toRightOf="@+id/icon"
         android:text="@string/last_update"
-        android:textSize="14sp"/>
+        android:textSize="14sp"
+        android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/timestamp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/user"
-        android:layout_marginTop="5dp"
+        android:layout_below="@+id/file"
         android:maxLines="4"
         android:layout_toRightOf="@+id/indicate_t"
         android:text="@string/timestamp"

@@ -40,6 +40,7 @@ import com.koushikdutta.ion.Response;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -97,6 +98,7 @@ public class ImgFragment extends Fragment {
     private final String imgFeed = "imageresponse";
 
     private final int FEED_LISTVIEW = 0;
+    private final int SEND_INFO = 1;
 
     private ListItem[] listItems;
     private String[] img_html_urls;
@@ -170,31 +172,6 @@ public class ImgFragment extends Fragment {
                     //send information of picture before sending the picture
                     httpConnect = new HttpConnect(Constants.IMG_INFOR_URL);
                     httpConnect.execute();
-
-                    //send the file to server
-                    File img_file = new File(img_path);
-
-                    //Compress the image
-                    Future uploading = Ion.with(getContext())
-                            .load(Constants.IMG_SERVER_URL)
-                            .setMultipartFile("image", img_file)
-                            .asString()
-                            .withResponse()
-                            .setCallback(new FutureCallback<Response<String>>() {
-                                @Override
-                                public void onCompleted(Exception e, Response<String> result) {
-                                    try {
-                                        Log.i(TAG, "onCompleted " + result.getResult());
-                                        JSONObject json = new JSONObject(result.getResult());
-                                        Toast.makeText(getContext(), json.getString("response"), Toast.LENGTH_SHORT).show();
-                                    } catch (Exception e1) {
-                                        e1.printStackTrace();
-                                    }
-                                }
-                            });
-
-                    sendRequest();
-                    img_file = null;
                 }
             }
         });
@@ -358,8 +335,6 @@ public class ImgFragment extends Fragment {
             Bitmap compressed = null;
             InputStream in = null;
 
-            Log.i(TAG, "LoadImage URL " + URL);
-            Log.i(TAG, "format : " + URL.substring(URL.lastIndexOf(".") + 1));
             int inWidth = 0;
             int inHeight = 0;
 
@@ -372,8 +347,9 @@ public class ImgFragment extends Fragment {
                 BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inJustDecodeBounds = true;
                 Bitmap bitmap = BitmapFactory.decodeStream(in, null, options);
-                in.close();
-                in = null;
+//                Log.i(TAG, "LoadImage URL " + URL);
+//                Log.i(TAG, "format : " + URL.substring(URL.lastIndexOf(".") + 1));
+//                Log.i(TAG, (in == null)? "true" : "false");
 
                 // save width and height
                 inWidth = options.outWidth;
@@ -455,6 +431,7 @@ public class ImgFragment extends Fragment {
             ImageView icon = (ImageView)rowView.findViewById(R.id.icon);
             TextView user = (TextView)rowView.findViewById(R.id.user);
             TextView time = (TextView)rowView.findViewById(R.id.timestamp);
+            TextView file = (TextView)rowView.findViewById(R.id.file);
 
             if(icon != null){
                 new LoadImgTask(icon).execute(listData.get(position).getImg_url());
@@ -462,6 +439,7 @@ public class ImgFragment extends Fragment {
 
             user.setText(listData.get(position).getAuthor());
             time.setText(listData.get(position).getTimestamp());
+            file.setText(listData.get(position).getFileName());
 
             return rowView;
         }
@@ -480,7 +458,10 @@ public class ImgFragment extends Fragment {
                     lv.setAdapter(new CustomListAdapter(mContext, srcList));
 
                     break;
-
+                case SEND_INFO:
+                    SendImage sendImage = new SendImage();
+                    sendImage.run();
+                    break;
             }
         }
     }
@@ -526,6 +507,7 @@ public class ImgFragment extends Fragment {
                 e.printStackTrace();
             }
 
+            mHandler.sendEmptyMessage(SEND_INFO);
             return ;
         }
 
@@ -549,18 +531,6 @@ public class ImgFragment extends Fragment {
         @Override
         public void run(){
             super.run();
-            //compress the resolution
-            /*ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            if(imgPath.substring(imgPath.lastIndexOf(".") + 1).matches("PNG") ||
-                    imgPath.substring(imgPath.lastIndexOf(".") + 1).matches("png")){
-                original.compress(Bitmap.CompressFormat.PNG, 10, baos);
-            } else if(imgPath.substring(imgPath.lastIndexOf(".") + 1).matches("jpeg") ||
-                    imgPath.substring(imgPath.lastIndexOf(".") + 1).matches("jpg") ||
-                    imgPath.substring(imgPath.lastIndexOf(".") + 1).matches("JPEG") ||
-                    imgPath.substring(imgPath.lastIndexOf(".") + 1).matches("JPG")){
-                original.compress(Bitmap.CompressFormat.JPEG, 10, baos);
-            }
-            compressed = BitmapFactory.decodeStream(new ByteArrayInputStream(baos.toByteArray()));*/
 
             try{
                 int inWidth = 0;
@@ -625,4 +595,35 @@ public class ImgFragment extends Fragment {
             show_img.setImageBitmap(decoded);
         }
     };
+
+    class SendImage extends Thread{
+        @Override
+        public void run(){
+            super.run();
+            //send the file to server
+            File img_file = new File(img_path);
+
+            //Compress the image
+            Future uploading = Ion.with(getContext())
+                    .load(Constants.IMG_SERVER_URL)
+                    .setMultipartFile("image", img_file)
+                    .asString()
+                    .withResponse()
+                    .setCallback(new FutureCallback<Response<String>>() {
+                        @Override
+                        public void onCompleted(Exception e, Response<String> result) {
+                            try {
+                                Log.i(TAG, "onCompleted " + result.getResult());
+                                JSONObject json = new JSONObject(result.getResult());
+                                Toast.makeText(getContext(), json.getString("response"), Toast.LENGTH_SHORT).show();
+                            } catch (Exception e1) {
+                                e1.printStackTrace();
+                            }
+                        }
+                    });
+
+            sendRequest();
+            img_file = null;
+        }
+    }
 }

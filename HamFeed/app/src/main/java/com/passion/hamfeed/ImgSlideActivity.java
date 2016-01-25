@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -73,7 +74,7 @@ public class ImgSlideActivity extends FragmentActivity {
 
     private static int swipe_length;
     private ImageFragmentPagerAdapter imageFragmentPagerAdapter;
-    private ViewPager viewPager;
+    private static ViewPager viewPager;
     private static Context mContext;
 
     public static final String[] IMAGE_NAME = {"eagle", "horse", "bonobo", "wolf", "owl", "bear",};
@@ -140,7 +141,7 @@ public class ImgSlideActivity extends FragmentActivity {
         @Override
         public void call(Object... args) {
             JSONArray data_arr = (JSONArray) args[0];
-            Log.i(TAG, "data_arr " + data_arr.toString());
+//            Log.i(TAG, "data_arr " + data_arr.toString());
             list_item = new ListItem[data_arr.length()];
             img_urls = new String[data_arr.length()];
 
@@ -154,7 +155,7 @@ public class ImgSlideActivity extends FragmentActivity {
 
                 try {
                     JSONObject json = data_arr.getJSONObject(i);
-                    Log.i(TAG, i + " 번째 " + json.toString());
+//                    Log.i(TAG, i + " 번째 " + json.toString());
                     list_item[index - i].setAuthor(json.getString("username"));
                     list_item[index - i].setImg_url(json.getString("html_addr"));
                     img_urls[index - i] = json.getString("html_addr");
@@ -198,6 +199,11 @@ public class ImgSlideActivity extends FragmentActivity {
         private ImageView imageView;
         private int card_position;
 
+        private final String FILE = "filename";
+        private final String ROOM = "roomnumber";
+        private final String TIME = "time";
+        private final String USER = "username";
+
         @Override
         public void onCreate(Bundle savedInstanceState){
             super.onCreate(savedInstanceState);
@@ -213,8 +219,13 @@ public class ImgSlideActivity extends FragmentActivity {
             Bundle bundle = getArguments();
             card_position = bundle.getInt("position");
 //            Log.i(TAG, " " + card_position);
+
+//            Log.i(TAG, "imageview width " + imageView.getWidth());
             //loading image from server
-            Picasso.with(mContext).load(img_urls[card_position]).into(imageView);
+            Picasso.with(mContext)
+                    .load(img_urls[card_position])
+                    .resize(700, 700)
+                    .into(imageView);
 
             author = (TextView)swipeView.findViewById(R.id.author_name);
             file = (TextView)swipeView.findViewById(R.id.file_name);
@@ -254,10 +265,10 @@ public class ImgSlideActivity extends FragmentActivity {
                 img_info[i] = new JSONObject();
 
                 try {
-                    img_info[i].put("filename", list_item[i].getFileName());
-                    img_info[i].put("roomnumber", list_item[i].getRoomnumber());
-                    img_info[i].put("time", list_item[i].getTimestamp());
-                    img_info[i].put("username", list_item[i].getAuthor());
+                    img_info[i].put(FILE, list_item[i].getFileName());
+                    img_info[i].put(ROOM, list_item[i].getRoomnumber());
+                    img_info[i].put(TIME, list_item[i].getTimestamp());
+                    img_info[i].put(USER, list_item[i].getAuthor());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -291,13 +302,16 @@ public class ImgSlideActivity extends FragmentActivity {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
             reply_time = sdf.format(new Date());
 
+//            Log.i(TAG, "현재 위치? " + viewPager.getCurrentItem());
+            int current = viewPager.getCurrentItem();
+//            Log.i(TAG, img_info[viewPager.getCurrentItem()].toString());
             JSONObject reply_json = new JSONObject();
             try {
                 //the original image information
-                reply_json.put("username", username);
-                reply_json.put("roomnumber", roomnumber);
-                reply_json.put("filename", filename);
-                reply_json.put("time", timestamp);
+                reply_json.put(USER, img_info[current].get(USER));
+                reply_json.put(ROOM, img_info[current].get(ROOM));
+                reply_json.put(FILE, img_info[current].get(FILE));
+                reply_json.put(TIME, img_info[current].get(TIME));
 
                 //reply for the image
                 reply_json.put("replyuser", reply_user);
