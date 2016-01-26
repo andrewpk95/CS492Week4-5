@@ -1,14 +1,17 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/GameLogic/PlayerInfoManager.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Network/ServerManager.cs">
     <Files>
       <File FileName="Assets/Scripts/Fighter/FighterController.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/GameLogic/PlayerInfoManager.cs" Line="9" Column="12" />
       <File FileName="Assets/Scripts/Network/PlayerChoose.cs" Line="8" Column="9" />
-      <File FileName="Assets/Scripts/Network/PlayerInput.cs" Line="34" Column="19" />
-      <File FileName="Assets/Scripts/UI/CharacterUIManager.cs" Line="19" Column="38" />
-      <File FileName="Assets/Scripts/Container/CharacterList.cs" Line="7" Column="36" />
-      <File FileName="Assets/Scripts/Fighter/HitBoxes/HitBox.cs" Line="56" Column="77" />
+      <File FileName="Assets/Scripts/Network/PlayerInput.cs" Line="46" Column="53" />
+      <File FileName="Assets/Scripts/GameLogic/ResultLogic.cs" Line="16" Column="37" />
+      <File FileName="Assets/Scripts/UI/UIWinner.cs" Line="20" Column="1" />
+      <File FileName="Assets/Scripts/GameLogic/TimedGameLogic.cs" Line="66" Column="3" />
+      <File FileName="Assets/Scripts/Network/ServerManager.cs" Line="120" Column="5" />
+      <File FileName="Assets/Scripts/UI/UITime.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Container/PlayerContainer.cs" Line="27" Column="22" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
