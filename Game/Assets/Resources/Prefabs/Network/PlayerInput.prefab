@@ -73,7 +73,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Mario: {fileID: 144222, guid: 3a4bfc9d85bb64a8fa0c745cf9c4b2b4, type: 2}
+  Inkachu: {fileID: 114714, guid: c03f1ec28e7074cb983a6cc89e081973, type: 2}
   inputManager: {fileID: 0}
+  player: 0
+  g_fighter: {fileID: 0}
   JoystickPosition: {x: 0, y: 0}
   isJoystickButtonPressed: 0
   isAttackButtonPressed: 0
@@ -89,7 +92,11 @@ Prefab:
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications: []
+    m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: Inkachu
+      value: 
+      objectReference: {fileID: 114714, guid: c03f1ec28e7074cb983a6cc89e081973, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 110136}
