@@ -16,6 +16,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -230,9 +231,14 @@ public class ImgSlideActivity extends FragmentActivity {
 
 //            Log.i(TAG, "imageview width " + imageView.getWidth());
             //loading image from server
+
+            Display currentDisplay = getActivity().getWindowManager().getDefaultDisplay();
+            int dw = currentDisplay.getWidth();
+            int dh = currentDisplay.getHeight();
+
             Picasso.with(mContext)
                     .load(img_urls[card_position])
-                    .resize(700, 700)
+                    .resize(dw - 50, dh - 200)
                     .into(imageView);
 
             author = (TextView)swipeView.findViewById(R.id.author_name);

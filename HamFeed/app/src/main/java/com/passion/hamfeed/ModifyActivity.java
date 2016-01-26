@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PorterDuff;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -90,6 +91,13 @@ public class ModifyActivity extends Activity{
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_clear) {
             Log.i(TAG, "action_clear is clicked");
+            /*drawView.setBackgroundColor(Color.WHITE);
+            drawView.getDrawingCache().eraseColor(Color.WHITE);
+            drawView.destroyDrawingCache();*/
+            /*drawView = null;
+            drawView = new DrawView(this);
+            setBitmap();*/
+
             return true;
         }else if(id == R.id.action_save){
             Log.i(TAG, "action_save is clicked");
@@ -102,6 +110,8 @@ public class ModifyActivity extends Activity{
             //SaveBitmapToFileCache(getBitmapFromView(drawView), "/temp/", "temp.png");
 
             return true;
+        }else if(id == R.id.action_change_pen_color){
+            drawView.ChangePenColor();
         }
 
         return super.onOptionsItemSelected(item);
@@ -138,6 +148,7 @@ public class ModifyActivity extends Activity{
         getListItem();
         setBitmap();
         setContentView(drawView);
+
     }
 
     public void setBitmap(){
@@ -184,7 +195,6 @@ public class ModifyActivity extends Activity{
         public void onDraw(Canvas canvas) {
 
             super.onDraw(canvas);
-
             canvas.drawPath(path, paint);
         }
 
@@ -208,6 +218,10 @@ public class ModifyActivity extends Activity{
             // Schedules a repaint.
             invalidate();
             return true;
+        }
+
+        public void ChangePenColor(){
+            paint.setColor(Color.WHITE);
         }
 
     }
