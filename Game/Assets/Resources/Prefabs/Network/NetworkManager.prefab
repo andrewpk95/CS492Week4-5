@@ -10,7 +10,6 @@ GameObject:
   - 4: {fileID: 437338}
   - 114: {fileID: 11420548}
   - 114: {fileID: 11420302}
-  - 114: {fileID: 11499928}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -36,7 +35,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 177788}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 227461547, guid: 870353891bb340e2b2a9c8707e7419ba, type: 3}
   m_Name: 
@@ -65,13 +64,16 @@ MonoBehaviour:
   m_ScriptCRCCheck: 1
   m_MaxDelay: 0.01
   m_LogLevel: 2
-  m_PlayerPrefab: {fileID: 110136, guid: 862802192fdeb4a468b704857cf33ac6, type: 2}
+  m_PlayerPrefab: {fileID: 182556, guid: 56f474b1d39034b4e8b5b8d94acbc661, type: 2}
   m_AutoCreatePlayer: 1
   m_PlayerSpawnMethod: 1
   m_OfflineScene: 
   m_OnlineScene: 
   m_SpawnPrefabs:
   - {fileID: 144222, guid: 3a4bfc9d85bb64a8fa0c745cf9c4b2b4, type: 2}
+  - {fileID: 110136, guid: 862802192fdeb4a468b704857cf33ac6, type: 2}
+  - {fileID: 129074, guid: 5911c5f77bbf04c2b8e8f2512539fa81, type: 2}
+  - {fileID: 137654, guid: 5e7d4f8792e8447f384b1c567860fcd8, type: 2}
   m_CustomConfig: 0
   m_MaxConnections: 4
   m_ConnectionConfig:
@@ -111,17 +113,6 @@ MonoBehaviour:
   matchMaker: {fileID: 0}
   matchName: default
   matchSize: 4
---- !u!114 &11499928
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 177788}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f01c249b187bc4397acbf6f673bb943b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

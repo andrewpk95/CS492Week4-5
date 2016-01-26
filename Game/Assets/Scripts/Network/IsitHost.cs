@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ConnectionHandler : MonoBehaviour {
+public class IsitHost : MonoBehaviour {
+
+	public bool isHost;
 
 	// Use this for initialization
 	void Start () {

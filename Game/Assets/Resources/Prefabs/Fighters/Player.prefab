@@ -1136,7 +1136,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShieldHealth: 30
   health: 30
-  degenRate: 5
+  degenRate: 2
   regenRate: 5
   shield: {fileID: 166348}
 --- !u!114 &11479682
@@ -1475,6 +1475,10 @@ Prefab:
       propertyPath: controller
       value: 
       objectReference: {fileID: 11477760}
+    - target: {fileID: 0}
+      propertyPath: degenRate
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 144222}

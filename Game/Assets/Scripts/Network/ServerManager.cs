@@ -22,6 +22,8 @@ public class ServerManager : MonoBehaviour {
 		if (dontDestroyOnLoad) {
 			DontDestroyOnLoad (transform.gameObject);
 		}
+		network = FindObjectOfType<NetworkManager> ();
+
 		//Find the Socket Component in the Game Scene
 		GameObject go = GameObject.Find("SocketIO");
 		socket = go.GetComponent<SocketIOComponent>();
@@ -108,16 +110,12 @@ public class ServerManager : MonoBehaviour {
 	}
 
 	public void SendResult(string winner) {
-		/*
-		string jsonString = JsonUtility.ToJson (pokedama);
-		JSONObject jsonPoke = new JSONObject (jsonString);
-		Debug.Log (jsonPoke.ToString ());
+		
 		JSONObject json = new JSONObject ();
-		json.AddField ("RequestType", "Save");
-		json.AddField ("PokeDama", jsonPoke);
+		json.AddField ("winner", winner);
 		Debug.Log (json.ToString());
-		socket.Emit ("Request", json);
-		*/
+		socket.Emit ("ResultSend", json);
+
 	}
 	/*
 	//Call this function from the GameManager if you want to update the current PokeDama information. 

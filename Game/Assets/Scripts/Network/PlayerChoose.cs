@@ -1,18 +1,25 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
+using System.Collections.Generic;
 
 public class PlayerChoose : NetworkBehaviour {
 
+	public GameObject playerInput;
+
 	public Player player;
 	public PlayerInfoManager infoManager;
-
+	public bool dontDestroyOnLoad;
 	// Use this for initialization
 	void Start () {
+		if (dontDestroyOnLoad) {
+			DontDestroyOnLoad (this.gameObject);
+		}
 		if (!isLocalPlayer)
 			return;
 		CharacterUIManager UI = FindObjectOfType<CharacterUIManager> ();
 		UI.playerChoose = this;
+
 		CmdAdd ();
 	}
 
@@ -38,8 +45,16 @@ public class PlayerChoose : NetworkBehaviour {
 		infoManager.ChooseCharacter (player, n);
 	}
 
-	// Update is called once per frame
-	void Update () {
-		
+	void OnLevelWasLoaded(int i) {
+		if (i == 1) {
+			CmdReplace ();
+		}
+	}
+
+	[Command]
+	void CmdReplace() {
+		GameObject go = (GameObject)Instantiate (playerInput);
+		NetworkServer.Spawn (go);
+		NetworkServer.ReplacePlayerForConnection (connectionToClient, go, playerControllerId);
 	}
 }

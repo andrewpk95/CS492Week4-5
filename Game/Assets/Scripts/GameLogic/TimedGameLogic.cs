@@ -16,7 +16,7 @@ public class TimedGameLogic : NetworkBehaviour, GameLogic {
 	//Time
 	public float timeLength = 300f;
 	public float startTime;
-	//[SyncVar]
+	[SyncVar]
 	public float remainingTime;
 
 	// Use this for initialization
@@ -63,9 +63,16 @@ public class TimedGameLogic : NetworkBehaviour, GameLogic {
 		//Do something when time is over
 		var min = result.result.OrderBy(kvp => kvp.Value).First();
 		var minKey = min.Key;
+		string winner = PlayerContainer.Get (minKey).getName ();
+		server.SendResult (winner);
+		result.SetWinner (winner);
+		SceneManager.LoadScene ("ResultScene");
+		RpcOnGameOver (winner);
+	}
 
-		result.SetWinner(
-			PlayerContainer.Get (minKey).getName ());
+	[ClientRpc]
+	void RpcOnGameOver(string winner) {
+		result.SetWinner (winner);
 		SceneManager.LoadScene ("ResultScene");
 	}
 }

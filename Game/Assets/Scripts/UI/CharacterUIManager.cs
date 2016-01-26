@@ -4,6 +4,7 @@ using System.Collections;
 public class CharacterUIManager : MonoBehaviour {
 
 	public PlayerChoose playerChoose;
+	public SelectionLogic logic;
 
 	// Use this for initialization
 	void Start () {
@@ -17,5 +18,9 @@ public class CharacterUIManager : MonoBehaviour {
 
 	public void OnCharacterClick(string n) {
 		playerChoose.OnCharacterChoose (n);
+	}
+
+	public void OnNextButtonClick() {
+		logic.NextScene ();
 	}
 }
