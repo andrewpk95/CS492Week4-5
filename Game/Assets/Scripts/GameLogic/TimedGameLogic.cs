@@ -2,8 +2,12 @@
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using System.Linq;
 
 public class TimedGameLogic : NetworkBehaviour, GameLogic {
+
+	public ServerManager server;
+	public ResultContainer result;
 
 	//Constants
 	public const float RESPAWN_TIME = 1;
@@ -12,11 +16,14 @@ public class TimedGameLogic : NetworkBehaviour, GameLogic {
 	//Time
 	public float timeLength = 300f;
 	public float startTime;
-	[SyncVar]
+	//[SyncVar]
 	public float remainingTime;
 
 	// Use this for initialization
 	void Start () {
+		server = FindObjectOfType<ServerManager> ();
+		result = FindObjectOfType<ResultContainer> ();
+
 		SPAWN_POSITION = new Vector3 (0f, 0.5f, 0f);
 
 		startTime = Time.time;
@@ -37,6 +44,7 @@ public class TimedGameLogic : NetworkBehaviour, GameLogic {
 
 	public void OnPlayerDeath(GameObject player) {
 		Debug.Log (player.name + " died! Respawning in 1 second...");
+		result.Increment (player.GetComponent<Fighter> ().getPlayer ());
 		Respawn (player);
 	}
 		
@@ -53,6 +61,11 @@ public class TimedGameLogic : NetworkBehaviour, GameLogic {
 
 	public void OnGameOver() {
 		//Do something when time is over
+		var min = result.result.OrderBy(kvp => kvp.Value).First();
+		var minKey = min.Key;
+
+		result.SetWinner(
+			PlayerContainer.Get (minKey).getName ());
 		SceneManager.LoadScene ("ResultScene");
 	}
 }

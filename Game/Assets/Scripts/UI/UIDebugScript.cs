@@ -18,6 +18,8 @@ public class UIDebugScript : MonoBehaviour {
 	}
 
 	public static void write(string text) {
+		if (label == null)
+			return;
 		label.text = text;
 	}
 

@@ -5,6 +5,7 @@ using System.Collections;
 public class FighterController : NetworkBehaviour, Fighter {
 
 	public PlayerInput Input;
+	public bool isHost;
 
 	public float GRAVITY = 0.3f;
 
@@ -69,6 +70,10 @@ public class FighterController : NetworkBehaviour, Fighter {
 		player = pl;
 	}
 
+	public void SetLocalClient(bool local) {
+		isHost = local;
+	}
+
 	// Use this for initialization
 	void Start () {
 		//Initialize
@@ -119,6 +124,8 @@ public class FighterController : NetworkBehaviour, Fighter {
 				UpdateGuard ();
 				UpdateJump ();
 			}
+		} else {
+			Input.Reset ();
 		}
 	}
 
@@ -138,7 +145,7 @@ public class FighterController : NetworkBehaviour, Fighter {
 
 	void UpdateAttack() {
 		//Update Attack input
-		anim.SetTrigger("Attack");
+		//anim.SetTrigger("Attack");
 		if (isGrounded) { //Ground Moves
 			if (Input.inputType == InputType.AttackStrong) { //Smash Attacks
 				Input.Reset();
@@ -180,7 +187,7 @@ public class FighterController : NetworkBehaviour, Fighter {
 				Input.Reset();
 				float modifier = isFacingRight ? 1f : -1f;
 				Vector2 faceDirection = new Vector2 (modifier, 0f);
-				if (Input.inputDirection.x != 0) { 
+				if (Input.inputDirection.y == 0) { 
 					if (Input.inputDirection == faceDirection) { //Forward Air
 						ForwardAir ();
 					} else { //Back Air
@@ -200,19 +207,25 @@ public class FighterController : NetworkBehaviour, Fighter {
 	void LeftSideSmash() {
 		Debug.Log (playerName + "'s Left Side Smash!");
 		anim.SetTrigger ("SideSmash");
+		RpcAnim ("SideSmash");
 	}
 
 	void RightSideSmash() {
 		Debug.Log (playerName + "'s Right Side Smash!");
 		anim.SetTrigger ("SideSmash");
+		RpcAnim ("SideSmash");
 	}
 
 	void UpSmash() {
 		Debug.Log (playerName + "'s Up Smash!");
+		anim.SetTrigger ("UpSmash");
+		RpcAnim ("UpSmash");
 	}
 
 	void DownSmash() {
 		Debug.Log (playerName + "'s Down Smash!");
+		anim.SetTrigger ("DownSmash");
+		RpcAnim ("DownSmash");
 	}
 
 	void LeftWeakAttack() {
@@ -237,22 +250,32 @@ public class FighterController : NetworkBehaviour, Fighter {
 
 	void NeutralAir() {
 		Debug.Log (playerName + "'s Neutral Air!");
+		anim.SetTrigger ("NeutralAir");
+		RpcAnim ("NeutralAir");
 	}
 
 	void ForwardAir() {
 		Debug.Log (playerName + "'s Forward Air!");
+		anim.SetTrigger ("ForwardAir");
+		RpcAnim ("ForwardAir");
 	}
 
 	void BackAir() {
 		Debug.Log (playerName + "'s Back Air!");
+		anim.SetTrigger ("BackAir");
+		RpcAnim ("BackAir");
 	}
 
 	void UpAir() {
 		Debug.Log (playerName + "'s Up Air!");
+		anim.SetTrigger ("UpAir");
+		RpcAnim ("UpAir");
 	}
 
 	void DownAir() {
 		Debug.Log (playerName + "'s Down Air!");
+		anim.SetTrigger ("DownAir");
+		RpcAnim ("DownAir");
 	}
 
 	void UpdateGuard() {
@@ -300,6 +323,7 @@ public class FighterController : NetworkBehaviour, Fighter {
 	void RollForward() {
 		Debug.Log (playerName + "'s Forward Roll!");
 		anim.SetTrigger ("RollForward");
+		RpcAnim ("RollForward");
 		int modifier = isFacingRight ? 1 : -1;
 		velocity.x = rollImpulse * modifier;
 	}
@@ -307,6 +331,7 @@ public class FighterController : NetworkBehaviour, Fighter {
 	void RollBackward() {
 		Debug.Log (playerName + "'s Backward Roll!");
 		anim.SetTrigger ("RollBackward");
+		RpcAnim ("RollBackward");
 		int modifier = isFacingRight ? -1 : 1;
 		velocity.x = rollImpulse * modifier;
 	}
@@ -314,11 +339,13 @@ public class FighterController : NetworkBehaviour, Fighter {
 	void SideDodge() {
 		Debug.Log (playerName + "'s Side Dodge!");
 		anim.SetTrigger ("SideDodge");
+		RpcAnim ("SideDodge");
 	}
 
 	void AirDodge() {
 		Debug.Log (playerName + "'s Air Dodge!");
 		anim.SetTrigger ("AirDodge");
+		RpcAnim ("AirDodge");
 	}
 
 	void UpdateJump() {
@@ -336,7 +363,9 @@ public class FighterController : NetworkBehaviour, Fighter {
 		if (isGrounded) { //Single Jump
 			Debug.Log (playerName + "'s Jump!");
 			anim.SetTrigger ("Jump");
+			RpcAnim ("Jump");
 			anim.SetTrigger ("SingleJump");
+			RpcAnim ("SingleJump");
 			isGrounded = false;
 			isJumping = true;
 			isFalling = false;
@@ -344,6 +373,7 @@ public class FighterController : NetworkBehaviour, Fighter {
 		} else if (!isDoubleJumping) { //Double Jump
 			Debug.Log (playerName + "'s Double Jump!");
 			anim.SetTrigger ("DoubleJump");
+			RpcAnim ("DoubleJump");
 			isDoubleJumping = true;
 			isFalling = false;
 			velocity.y = doubleJumpImpulse;
@@ -365,6 +395,7 @@ public class FighterController : NetworkBehaviour, Fighter {
 					Dash ();
 				} else {
 					anim.SetTrigger ("Idle");
+					RpcAnim ("Idle");
 					Stop ();
 				}
 			} else {
@@ -372,6 +403,7 @@ public class FighterController : NetworkBehaviour, Fighter {
 					
 				} else if (isBusy) {
 					anim.SetTrigger ("Idle");
+					RpcAnim ("Idle");
 				}
 				Stop ();
 			}
@@ -387,6 +419,7 @@ public class FighterController : NetworkBehaviour, Fighter {
 					
 				} else if (isBusy) {
 					anim.SetTrigger ("Idle");
+					RpcAnim ("Idle");
 				}
 				AirStop ();
 			}
@@ -461,6 +494,7 @@ public class FighterController : NetworkBehaviour, Fighter {
 
 	void Walk() {
 		anim.SetTrigger ("Walk");
+		RpcAnim ("Walk");
 		newVelocity.x += acceleration * Input.JoystickPosition.x;
 		float clampWalkSpeed = walkSpeed * Mathf.Abs (Input.JoystickPosition.x);
 		newVelocity.x = Mathf.Clamp (newVelocity.x, -clampWalkSpeed, clampWalkSpeed);
@@ -474,6 +508,7 @@ public class FighterController : NetworkBehaviour, Fighter {
 
 	void Dash() {
 		anim.SetTrigger ("Dash");
+		RpcAnim ("Dash");
 		int modifier = Input.JoystickPosition.x > 0 ? 1 : -1;
 		if ((modifier > 0 && velocity.x < 0) || (modifier < 0 && velocity.x > 0)) {
 			newVelocity.x += deceleration * modifier;
@@ -519,6 +554,13 @@ public class FighterController : NetworkBehaviour, Fighter {
 		anim.SetBool ("isFalling", isFalling);
 		anim.SetBool ("isHitStunned", isHitStunned);
 		anim.SetBool ("isGuarding", isGuarding);
+	}
+
+	[ClientRpc]
+	void RpcAnim(string trigger) {
+		if (isHost)
+			return;
+		anim.SetTrigger (trigger);
 	}
 
 	void OnApplicationQuit() {
@@ -592,6 +634,10 @@ public class FighterController : NetworkBehaviour, Fighter {
 	public void setName(string name) {
 		this.gameObject.name = name;
 		playerName = name;
+	}
+
+	public Transform getTransform() {
+		return transform;
 	}
 
 	public Player getPlayer() {

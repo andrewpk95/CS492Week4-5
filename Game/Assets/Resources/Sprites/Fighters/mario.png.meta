@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: b62955136611c4b27b8c226d8eafbc8b
-timeCreated: 1452948269
+timeCreated: 1453548942
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -261,10 +261,12 @@ TextureImporter:
     21300508: mario_386
     21300510: mario_175
     21300512: mario_39.5
+    21300514: mario_0
+    21300516: mario_1
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
-    enableMipMap: 1
+    enableMipMap: 0
     linearTexture: 0
     correctGamma: 0
     fadeOut: 0
@@ -276,14 +278,14 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
-  isReadable: 0
+  isReadable: 1
   grayScaleToAlpha: 0
   generateCubemap: 0
   cubemapConvolution: 0
   cubemapConvolutionSteps: 7
   cubemapConvolutionExponent: 1.5
   seamlessCubemap: 0
-  textureFormat: -1
+  textureFormat: -3
   maxTextureSize: 2048
   textureSettings:
     filterMode: -1
@@ -302,7 +304,7 @@ TextureImporter:
   spritePivot: {x: 0.5, y: 0.5}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spritePixelsToUnits: 100
-  alphaIsTransparency: 1
+  alphaIsTransparency: 0
   textureType: 8
   buildTargetSettings: []
   spriteSheet:
@@ -3145,8 +3147,8 @@ TextureImporter:
         y: 1349
         width: 23
         height: 31
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
     - name: mario_39.5
@@ -3160,6 +3162,41 @@ TextureImporter:
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
+    - name: mario_0
+      rect:
+        serializedVersion: 2
+        x: 806
+        y: 620
+        width: 182
+        height: 242
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 24.888672, y: 106.68359}
+        - {x: -79.11133, y: 106.68359}
+        - {x: -79.11133, y: -105.31641}
+        - {x: 73.88867, y: -105.31641}
+        - {x: 80.88867, y: -87.31641}
+        - {x: 80.88867, y: 27.683594}
+        - {x: 68.88867, y: 34.683594}
+    - name: mario_1
+      rect:
+        serializedVersion: 2
+        x: 806
+        y: 727
+        width: 145
+        height: 135
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -32.11133, y: -58.504883}
+        - {x: 64.88867, y: -58.504883}
+        - {x: 64.88867, y: 50.495117}
+        - {x: 63.88867, y: 60.495117}
+        - {x: -63.11133, y: 60.495117}
+        - {x: -63.11133, y: 0.4951172}
     outline: []
   spritePackingTag: 
   userData: 

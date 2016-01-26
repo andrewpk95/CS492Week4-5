@@ -40,6 +40,7 @@ public class GameInputManager : MonoBehaviour {
 	public float jumpHoldTime;
 
 	//Final Output for other classes to use
+	public bool isHost;
 	public Vector2 JoystickPosition;
 	public bool isJoystickButtonPressed;
 	public bool isAttackButtonPressed;

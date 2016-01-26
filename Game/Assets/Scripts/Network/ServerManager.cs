@@ -106,6 +106,19 @@ public class ServerManager : MonoBehaviour {
 			//Instantiate (ErrorMessage, Vector3.zero, Quaternion.identity);
 		}
 	}
+
+	public void SendResult(string winner) {
+		/*
+		string jsonString = JsonUtility.ToJson (pokedama);
+		JSONObject jsonPoke = new JSONObject (jsonString);
+		Debug.Log (jsonPoke.ToString ());
+		JSONObject json = new JSONObject ();
+		json.AddField ("RequestType", "Save");
+		json.AddField ("PokeDama", jsonPoke);
+		Debug.Log (json.ToString());
+		socket.Emit ("Request", json);
+		*/
+	}
 	/*
 	//Call this function from the GameManager if you want to update the current PokeDama information. 
 	public void RequestSave(PokeDama pokedama) {

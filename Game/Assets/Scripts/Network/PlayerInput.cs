@@ -5,6 +5,8 @@ using System.Collections;
 public class PlayerInput : NetworkBehaviour {
 
 	public GameObject Mario;
+	public GameObject Inkachu;
+	public bool isHost;
 
 	public GameInputManager inputManager;
 	[SyncVar] public Player player;
@@ -26,21 +28,27 @@ public class PlayerInput : NetworkBehaviour {
 		if (!isLocalPlayer)
 			return;
 		inputManager = FindObjectOfType<GameInputManager> ();
+		isHost = inputManager.isHost;
 		//Reset ();
 
-		CmdAdd ();
+		CmdAdd (isHost);
 		UpdateInput ();
 	}
 
 	[Command]
-	void CmdAdd() {
+	void CmdAdd(bool host) {
+		GameInputManager i = FindObjectOfType<GameInputManager> ();
+		isHost = i.isHost;
 		g_fighter = (GameObject)Instantiate (Mario);
+		//g_fighter = (GameObject)Instantiate (Inkachu);
 		fighter = g_fighter.GetComponent<Fighter> ();
 		player = PlayerContainer.Add (fighter);
+		FindObjectOfType<ResultContainer> ().Add (player);
 		this.gameObject.name = player.ToString ();
 		fighter.SetPlayer (player);
 		fighter.setName (player.ToString ());
 		fighter.SetInput (this);
+		fighter.SetLocalClient (isHost);
 		NetworkServer.Spawn (g_fighter);
 		Debug.Log (PlayerContainer.Get(player).getName() + " joined the game");
 		RpcAdd (player);
