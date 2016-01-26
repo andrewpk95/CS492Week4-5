@@ -51,6 +51,7 @@ public class ReplyDialogFragment extends DialogFragment implements AdapterView.O
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.i(TAG, "QUERY : " + query.toString());
         mSocket.emit("replyRequest", query);
         mSocket.on("replyResponse", onReply);
 

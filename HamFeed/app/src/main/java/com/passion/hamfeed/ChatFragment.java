@@ -1,6 +1,8 @@
 package com.passion.hamfeed;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -61,7 +63,7 @@ public class ChatFragment extends Fragment {
     //Added
     private String TAG = "ChatFragment";
     private ImageButton send;
-    private ImageButton play;
+    private boolean is_first = true;
 
     @Override
     public void onAttach(Activity activity) {
@@ -158,13 +160,6 @@ public class ChatFragment extends Fragment {
             }
         });
 
-        play = (ImageButton) view.findViewById(R.id.play_button);
-        play.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                attempPlay();
-            }
-        });
     }
 
     @Override
@@ -185,8 +180,11 @@ public class ChatFragment extends Fragment {
             return;
         }
 
-        addLog(getResources().getString(R.string.message_welcome));
-        addParticipantsLog(numUsers);
+        Log.i(TAG, "웰컴로그가 2번나오는 것 같은데 왜 그런가요?" + requestCode + " result " + resultCode);
+        if(requestCode == Constants.REQUEST_LOGIN) {
+            addLog(getResources().getString(R.string.message_welcome));
+            addParticipantsLog(numUsers);
+        }
     }
 
     @Override
@@ -199,11 +197,11 @@ public class ChatFragment extends Fragment {
         super.onPause();
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        inflater.inflate(R.menu.menu_main, menu);
-    }
+//    @Override
+//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        inflater.inflate(R.menu.menu_main, menu);
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -273,29 +271,49 @@ public class ChatFragment extends Fragment {
         mSocket.emit("new message", message);
     }
 
-    private void attempPlay(){
+    public void attempPlay(){
         if (null == mUsername) return;
         if (!mSocket.connected()) return;
 
-        JSONObject play = new JSONObject();
-        try {
-            play.put("room", mPosition);
-            play.put("username", mUsername);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        mSocket.emit("play request", play);
         //call the unity application package
+        DialogInterface.OnClickListener dialogClickListner = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch(which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        JSONObject play = new JSONObject();
+                        try {
+                            play.put("room", mPosition);
+                            play.put("username", mUsername);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        mSocket.emit("play request", play);
+
+                        Intent mapIntent = new Intent("com.madcamp.myapplication.MapsActivity");
+                        mapIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        getContext().startActivity(mapIntent);
+
+                        break;
+                    case DialogInterface.BUTTON_NEGATIVE:
+
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage("Do you want call your freinds?").setPositiveButton("Yes, call me", dialogClickListner)
+                .setNegativeButton("No, it was miss", dialogClickListner).show();
     }
 
     private void startSignIn() {
-        mUsername = null;
+        mUsername = null; mPosition = null;
         Intent intent = new Intent(getActivity(), LoginActivity.class);
         startActivityForResult(intent, Constants.REQUEST_LOGIN);
     }
 
-    private void leave() {
+    public void leave() {
         mUsername = null;
         mSocket.disconnect();
         mSocket.connect();
@@ -326,6 +344,7 @@ public class ChatFragment extends Fragment {
                 @Override
                 public void run() {
                     //call the unity application package
+                    //Make dialog to be invited by the game invitation, debug is not possilbe
 //                    JSONObject data = (JSONObject) args[0];
 //                    String username;
 //                    String message;

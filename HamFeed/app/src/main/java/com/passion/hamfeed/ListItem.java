@@ -1,9 +1,11 @@
 package com.passion.hamfeed;
 
+import java.io.Serializable;
+
 /**
  * Created by Junhong on 2016-01-19.
  */
-public class ListItem {
+public class ListItem implements Serializable {
     private String author;
     private String img_url;
     private String timestamp;

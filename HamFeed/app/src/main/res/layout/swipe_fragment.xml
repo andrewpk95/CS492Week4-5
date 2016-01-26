@@ -66,6 +66,7 @@
                 android:layout_toRightOf="@id/indicate_time"
                 android:singleLine="true"
                 android:text="@string/timestamp"/>
+
         </RelativeLayout>
 
 
@@ -106,5 +107,29 @@
                 android:src="@android:drawable/ic_menu_send"
                 android:contentDescription="@string/action_send"/>
         </LinearLayout>
+
+        <Button
+            android:id="@+id/webViewBtn"
+            android:text="@string/WEB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="0dp"
+            android:minWidth="0dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignBottom="@+id/modifyViewBtn"
+            android:layout_alignParentTop="true" />
+
+        <Button
+            android:id="@+id/modifyViewBtn"
+            android:text="@string/modify"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="0dp"
+            android:minWidth="0dp"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/webViewBtn"
+            android:layout_toStartOf="@+id/webViewBtn" />
+
     </RelativeLayout>
 </ScrollView>

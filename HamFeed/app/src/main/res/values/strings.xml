@@ -33,7 +33,15 @@
     <string name="prompt_reply">Comment</string>
     <string name="space">\u00A0</string>
 
-    <string name="indicate_username">USER : </string>
-    <string name="indicate_filename">FILE : </string>
-    <string name="indicate_timestamp">TIMESTAMP : </string>
+    <string name="indicate_username">USER:</string>
+    <string name="indicate_filename">FILE:</string>
+    <string name="indicate_timestamp">TIMESTAMP:</string>
+    <string name="last_update">LAST UP:</string>
+    <string name="WEB">WEB</string>
+    <string name="magnify">MAG</string>
+    <string name="modify">FIX</string>
+
+    <string name="action_clear">Clear</string>
+    <string name="action_save">Save</string>
+    <string name="action_change_pen_color">PEN COLOR</string>
 </resources>

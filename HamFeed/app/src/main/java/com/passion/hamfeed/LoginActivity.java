@@ -3,6 +3,8 @@ package com.passion.hamfeed;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -16,6 +18,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
+import java.util.regex.Pattern;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -41,6 +44,18 @@ public class LoginActivity extends Activity {
 
     private String TAG = "LoginActivity";
 
+    protected InputFilter filterAlpha = new InputFilter(){
+        public CharSequence filter(CharSequence source, int start, int end,
+                                   Spanned dest, int dstart, int dend){
+            Pattern ps = Pattern.compile("^[a-zA-Z]+$");
+            if(!ps.matcher(source).matches()){
+                mUsernameView.setError(getString(R.string.error_kor));
+                return "";
+            }
+            return null;
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +63,7 @@ public class LoginActivity extends Activity {
 
         // Set up the login form.
         mUsernameView = (EditText) findViewById(R.id.username_input);
+        mUsernameView.setFilters(new InputFilter[]{filterAlpha});
         mUsernameView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {

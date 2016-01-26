@@ -1,5 +1,8 @@
 package com.passion.hamfeed;
 
+import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.*;
@@ -13,16 +16,23 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
+import com.viewpagerindicator.CirclePageIndicator;
+import com.viewpagerindicator.TitlePageIndicator;
+import com.viewpagerindicator.UnderlinePageIndicator;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -66,7 +76,7 @@ public class ImgSlideActivity extends FragmentActivity {
 
     private static int swipe_length;
     private ImageFragmentPagerAdapter imageFragmentPagerAdapter;
-    private ViewPager viewPager;
+    private static ViewPager viewPager;
     private static Context mContext;
 
     public static final String[] IMAGE_NAME = {"eagle", "horse", "bonobo", "wolf", "owl", "bear",};
@@ -76,12 +86,18 @@ public class ImgSlideActivity extends FragmentActivity {
     private final int REPLY = 1;
     private static final int SEND_LIST_FEED = 2;
 
+    private static Button webView;
+    private static Button fixView;
+    private TitlePageIndicator mIndicator;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_page);
         imageFragmentPagerAdapter = new ImageFragmentPagerAdapter(getSupportFragmentManager());
         viewPager = (ViewPager)findViewById(R.id.pager);
+        mIndicator = (TitlePageIndicator)findViewById(R.id.indicator);
 
         mContext = getApplicationContext();
         sendRequest();
@@ -116,6 +132,12 @@ public class ImgSlideActivity extends FragmentActivity {
         mSocket.emit("version", request);
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        sendRequest();
+    }
 
     @Override
     protected void onDestroy(){
@@ -128,7 +150,7 @@ public class ImgSlideActivity extends FragmentActivity {
         @Override
         public void call(Object... args) {
             JSONArray data_arr = (JSONArray) args[0];
-            Log.i(TAG, "data_arr " + data_arr.toString());
+//            Log.i(TAG, "data_arr " + data_arr.toString());
             list_item = new ListItem[data_arr.length()];
             img_urls = new String[data_arr.length()];
 
@@ -142,7 +164,7 @@ public class ImgSlideActivity extends FragmentActivity {
 
                 try {
                     JSONObject json = data_arr.getJSONObject(i);
-                    Log.i(TAG, i + " 번째 " + json.toString());
+//                    Log.i(TAG, i + " 번째 " + json.toString());
                     list_item[index - i].setAuthor(json.getString("username"));
                     list_item[index - i].setImg_url(json.getString("html_addr"));
                     img_urls[index - i] = json.getString("html_addr");
@@ -186,6 +208,11 @@ public class ImgSlideActivity extends FragmentActivity {
         private ImageView imageView;
         private int card_position;
 
+        private final String FILE = "filename";
+        private final String ROOM = "roomnumber";
+        private final String TIME = "time";
+        private final String USER = "username";
+
         @Override
         public void onCreate(Bundle savedInstanceState){
             super.onCreate(savedInstanceState);
@@ -201,8 +228,18 @@ public class ImgSlideActivity extends FragmentActivity {
             Bundle bundle = getArguments();
             card_position = bundle.getInt("position");
 //            Log.i(TAG, " " + card_position);
+
+//            Log.i(TAG, "imageview width " + imageView.getWidth());
             //loading image from server
-            Picasso.with(mContext).load(img_urls[card_position]).into(imageView);
+
+            Display currentDisplay = getActivity().getWindowManager().getDefaultDisplay();
+            int dw = currentDisplay.getWidth();
+            int dh = currentDisplay.getHeight();
+
+            Picasso.with(mContext)
+                    .load(img_urls[card_position])
+                    .resize(dw - 50, dh - 200)
+                    .into(imageView);
 
             author = (TextView)swipeView.findViewById(R.id.author_name);
             file = (TextView)swipeView.findViewById(R.id.file_name);
@@ -218,6 +255,32 @@ public class ImgSlideActivity extends FragmentActivity {
                     showDialog(card_position);
                 }
             });
+
+            webView = (Button)swipeView.findViewById(R.id.webViewBtn);
+            webView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ClipboardManager clipboardManager = (ClipboardManager)getActivity().getSystemService(CLIPBOARD_SERVICE);
+                    ClipData clipData = ClipData.newPlainText("url", list_item[card_position].getImg_url());
+                    clipboardManager.setPrimaryClip(clipData);
+                    Toast.makeText(getContext(), "Web address is copied on Clipboard", Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(getContext(), WebViewActivity.class);
+                    intent.putExtra("URL", list_item[card_position].getImg_url());
+                    startActivity(intent);
+                }
+            });
+
+            fixView = (Button)swipeView.findViewById(R.id.modifyViewBtn);
+            fixView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getContext(), ModifyActivity.class);
+                    intent.putExtra("modify", list_item[card_position]);
+                    intent.putExtra("modifyuser", reply_user);
+                    startActivity(intent);
+                }
+            });
             return swipeView;
         }
 
@@ -227,10 +290,10 @@ public class ImgSlideActivity extends FragmentActivity {
                 img_info[i] = new JSONObject();
 
                 try {
-                    img_info[i].put("filename", list_item[i].getFileName());
-                    img_info[i].put("roomnumber", list_item[i].getRoomnumber());
-                    img_info[i].put("time", list_item[i].getTimestamp());
-                    img_info[i].put("username", list_item[i].getAuthor());
+                    img_info[i].put(FILE, list_item[i].getFileName());
+                    img_info[i].put(ROOM, list_item[i].getRoomnumber());
+                    img_info[i].put(TIME, list_item[i].getTimestamp());
+                    img_info[i].put(USER, list_item[i].getAuthor());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -264,13 +327,16 @@ public class ImgSlideActivity extends FragmentActivity {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
             reply_time = sdf.format(new Date());
 
+//            Log.i(TAG, "현재 위치? " + viewPager.getCurrentItem());
+            int current = viewPager.getCurrentItem();
+//            Log.i(TAG, img_info[viewPager.getCurrentItem()].toString());
             JSONObject reply_json = new JSONObject();
             try {
                 //the original image information
-                reply_json.put("username", username);
-                reply_json.put("roomnumber", roomnumber);
-                reply_json.put("filename", filename);
-                reply_json.put("time", timestamp);
+                reply_json.put(USER, img_info[current].get(USER));
+                reply_json.put(ROOM, img_info[current].get(ROOM));
+                reply_json.put(FILE, img_info[current].get(FILE));
+                reply_json.put(TIME, img_info[current].get(TIME));
 
                 //reply for the image
                 reply_json.put("replyuser", reply_user);
@@ -314,6 +380,7 @@ public class ImgSlideActivity extends FragmentActivity {
 //                    lv.setAdapter(new CustomListAdapter(mContext, srcList));
                 case FEED:
                     viewPager.setAdapter(imageFragmentPagerAdapter);
+                    mIndicator.setViewPager(viewPager);
                     break;
                 case REPLY:
                     Log.i(TAG, "reply view is updated");
