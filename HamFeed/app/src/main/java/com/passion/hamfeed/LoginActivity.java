@@ -116,9 +116,10 @@ public class LoginActivity extends Activity {
 
         mUsername = username;
         mPosition = "0";
-
+        Log.i(TAG, "attemptLogin");
         // perform the user login attempt.
         mSocket.emit("add user", username, mPosition);
+        Log.i(TAG, "after the socket");
     }
 
     private Emitter.Listener onLogin = new Emitter.Listener() {
@@ -135,6 +136,7 @@ public class LoginActivity extends Activity {
             Intent intent = new Intent();
             intent.putExtra("username", mUsername);
             intent.putExtra("position", mPosition);
+            intent.putExtra("numUsers", numUsers);
             setResult(RESULT_OK, intent);
             finish();
         }

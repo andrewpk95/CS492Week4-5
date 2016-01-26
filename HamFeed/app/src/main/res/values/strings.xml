@@ -43,5 +43,8 @@
 
     <string name="action_clear">Clear</string>
     <string name="action_save">Save</string>
-    <string name="action_change_pen_color">PEN COLOR</string>
+    <string name="action_change_white">WHITE</string>
+    <string name="action_change_red">RED</string>
+    <string name="action_change_blue">BLUE</string>
+
 </resources>

@@ -89,30 +89,49 @@ public class ModifyActivity extends Activity{
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_clear) {
+        switch(id){
+            case R.id.action_clear:
+                drawView = null;
+                drawView = new DrawView(this);
+                drawView.setBackgroundColor(Color.WHITE);
+                setBitmap();
+                setContentView(drawView);
+                break;
+            case R.id.action_save:
+                httpConnect = new HttpConnect(Constants.IMG_INFOR_URL);
+                httpConnect.execute();
+                break;
+            case R.id.action_change_white:
+                drawView.ChangeWhite();
+                break;
+            case R.id.action_change_red:
+                drawView.ChangeRed();
+                break;
+            case R.id.action_change_blue:
+                drawView.ChangeBlue();
+                break;
+        }
+
+        /*if (id == R.id.action_clear) {
             Log.i(TAG, "action_clear is clicked");
-            /*drawView.setBackgroundColor(Color.WHITE);
+            drawView.setBackgroundColor(Color.WHITE);
             drawView.getDrawingCache().eraseColor(Color.WHITE);
-            drawView.destroyDrawingCache();*/
-            /*drawView = null;
+            drawView.destroyDrawingCache();
+            drawView = null;
             drawView = new DrawView(this);
-            setBitmap();*/
+            setBitmap();
 
             return true;
         }else if(id == R.id.action_save){
             Log.i(TAG, "action_save is clicked");
-            //send information of picture before sending the picture
-            httpConnect = new HttpConnect(Constants.IMG_INFOR_URL);
-            httpConnect.execute();
-
-  /*          UploadInfo uploadInfo = new UploadInfo(Constants.IMG_INFOR_URL, json_data);
-            uploadInfo.run();*/
-            //SaveBitmapToFileCache(getBitmapFromView(drawView), "/temp/", "temp.png");
-
+            send information of picture before sending the picture
+            UploadInfo uploadInfo = new UploadInfo(Constants.IMG_INFOR_URL, json_data);
+            uploadInfo.run();
+            SaveBitmapToFileCache(getBitmapFromView(drawView), "/temp/", "temp.png");
             return true;
         }else if(id == R.id.action_change_pen_color){
-            drawView.ChangePenColor();
-        }
+
+        }*/
 
         return super.onOptionsItemSelected(item);
     }
@@ -148,7 +167,6 @@ public class ModifyActivity extends Activity{
         getListItem();
         setBitmap();
         setContentView(drawView);
-
     }
 
     public void setBitmap(){
@@ -220,10 +238,20 @@ public class ModifyActivity extends Activity{
             return true;
         }
 
-        public void ChangePenColor(){
+        public void ChangeWhite(){
+            paint.clearShadowLayer();
             paint.setColor(Color.WHITE);
         }
 
+        public void ChangeRed(){
+            paint.setColor(Color.RED);
+        }
+
+        public void ChangeBlue(){
+
+            paint.setColor(Color.BLUE);
+
+        }
     }
 
     public class LoadImgTask extends AsyncTask<String, Void, Bitmap> {

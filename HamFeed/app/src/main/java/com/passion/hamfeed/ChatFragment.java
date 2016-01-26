@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -63,7 +64,6 @@ public class ChatFragment extends Fragment {
     //Added
     private String TAG = "ChatFragment";
     private ImageButton send;
-    private boolean is_first = true;
 
     @Override
     public void onAttach(Activity activity) {
@@ -84,6 +84,7 @@ public class ChatFragment extends Fragment {
         mSocket.on("typing", onTyping);
         mSocket.on("stop typing", onStopTyping);
         mSocket.on("play response", onPlay);
+
         mSocket.connect();
 
         startSignIn();
@@ -165,6 +166,11 @@ public class ChatFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == -1){
+            Log.i(TAG, "onActivityResult 오 마아티 유니티");
+        }
+        Log.i(TAG, "onActivityResult 오 마아티 유니티");
 
         if (Activity.RESULT_OK != resultCode) {
             getActivity().finish();
@@ -274,7 +280,10 @@ public class ChatFragment extends Fragment {
     public void attempPlay(){
         if (null == mUsername) return;
         if (!mSocket.connected()) return;
+        PlayDialog();
+    }
 
+    public void PlayDialog(){
         //call the unity application package
         DialogInterface.OnClickListener dialogClickListner = new DialogInterface.OnClickListener() {
             @Override
@@ -290,10 +299,17 @@ public class ChatFragment extends Fragment {
                         }
                         mSocket.emit("play request", play);
 
-                        Intent mapIntent = new Intent("com.madcamp.myapplication.MapsActivity");
+                        /*Intent mapIntent = new Intent("com.madcamp.myapplication.MapsActivity");
                         mapIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        getContext().startActivity(mapIntent);
+                        mapIntent.putExtra("username", mUsername);
+                        getContext().startActivity(mapIntent);*/
 
+                        PackageManager pm = getActivity().getPackageManager();
+                        Intent mapIntent = pm.getLaunchIntentForPackage("com.Passion.Blast");
+                        mapIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        mapIntent.putExtra("username", mUsername);
+//                        getContext().startActivity(mapIntent);
+                        getActivity().startActivityForResult(mapIntent, -1);
                         break;
                     case DialogInterface.BUTTON_NEGATIVE:
 
@@ -307,6 +323,46 @@ public class ChatFragment extends Fragment {
                 .setNegativeButton("No, it was miss", dialogClickListner).show();
     }
 
+    public void JoinDialog(JSONObject received){
+        //call the unity application package
+        DialogInterface.OnClickListener dialogClickListner = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch(which){
+                    case DialogInterface.BUTTON_POSITIVE:
+
+                        /*Intent mapIntent = new Intent("com.madcamp.myapplication.MapsActivity");
+                        mapIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        mapIntent.putExtra("username", mUsername);
+                        getContext().startActivity(mapIntent);*/
+
+                        PackageManager pm = getActivity().getPackageManager();
+                        Intent mapIntent = pm.getLaunchIntentForPackage("com.Passion.Blast");
+                        mapIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        mapIntent.putExtra("username", mUsername);
+                        getContext().startActivity(mapIntent);
+//                        getActivity().startActivityForResult(mapIntent, -1);
+                        break;
+                    case DialogInterface.BUTTON_NEGATIVE:
+
+                        break;
+                }
+            }
+        };
+
+        String friendID = null;
+
+        try {
+            friendID = received.getString("username");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage("**" + friendID + "**" + " wants you, Wanna join?").setPositiveButton("Yes, call me", dialogClickListner)
+                .setNegativeButton("No, I am busy", dialogClickListner).show();
+    }
+
     private void startSignIn() {
         mUsername = null; mPosition = null;
         Intent intent = new Intent(getActivity(), LoginActivity.class);
@@ -315,8 +371,9 @@ public class ChatFragment extends Fragment {
 
     public void leave() {
         mUsername = null;
-        mSocket.disconnect();
-        mSocket.connect();
+        mSocket.emit("leave");
+//        mSocket.disconnect();
+//        mSocket.connect();
         startSignIn();
     }
 
@@ -357,6 +414,8 @@ public class ChatFragment extends Fragment {
 //
 //                    removeTyping(username);
 //                    addMessage(username, message);
+                    JSONObject data = (JSONObject) args[0];
+                    JoinDialog(data);
                 }
             });
         }
@@ -400,7 +459,7 @@ public class ChatFragment extends Fragment {
                     } catch (JSONException e) {
                         return;
                     }
-
+                    Log.i(TAG, "onUserJoined");
                     addLog(getResources().getString(R.string.message_user_joined, username));
                     addParticipantsLog(numUsers);
                 }

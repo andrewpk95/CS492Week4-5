@@ -88,7 +88,7 @@ public class ImgSlideActivity extends FragmentActivity {
 
     private static Button webView;
     private static Button fixView;
-    private TitlePageIndicator mIndicator;
+    private UnderlinePageIndicator mIndicator;
 
 
     @Override
@@ -97,7 +97,7 @@ public class ImgSlideActivity extends FragmentActivity {
         setContentView(R.layout.fragment_page);
         imageFragmentPagerAdapter = new ImageFragmentPagerAdapter(getSupportFragmentManager());
         viewPager = (ViewPager)findViewById(R.id.pager);
-        mIndicator = (TitlePageIndicator)findViewById(R.id.indicator);
+        mIndicator = (UnderlinePageIndicator)findViewById(R.id.indicator);
 
         mContext = getApplicationContext();
         sendRequest();
@@ -380,6 +380,7 @@ public class ImgSlideActivity extends FragmentActivity {
 //                    lv.setAdapter(new CustomListAdapter(mContext, srcList));
                 case FEED:
                     viewPager.setAdapter(imageFragmentPagerAdapter);
+                    mIndicator.setFades(false);
                     mIndicator.setViewPager(viewPager);
                     break;
                 case REPLY:
