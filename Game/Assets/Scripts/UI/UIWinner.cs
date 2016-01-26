@@ -1,27 +1,22 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class UIDebugScript : MonoBehaviour {
+public class UIWinner : MonoBehaviour {
 
 	static UILabel label;
 
 	// Use this for initialization
-	void Start ()
-	{
+	void Start () {
 		label = GetComponent<UILabel> ();
 	}
 	
 	// Update is called once per frame
-	void Update ()
-	{
-		
+	void Update () {
+	
 	}
 
-	public static void write(string text) {
-		if (label == null)
-			return;
+	public static void write(string n) {
+		string text = "The Winner Is " + n + "!";
 		label.text = text;
 	}
-
 }
-

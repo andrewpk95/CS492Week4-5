@@ -923,8 +923,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HitEffect: {fileID: 190192, guid: d78444703e3c5407eacee9025027f817, type: 2}
-  Owner: {fileID: 0}
-  TargetsHit: []
   hitBoxFrame: 3
   frameLeft: 0
   damage: 2
@@ -947,8 +945,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HitEffect: {fileID: 190192, guid: d78444703e3c5407eacee9025027f817, type: 2}
-  Owner: {fileID: 0}
-  TargetsHit: []
   hitBoxFrame: 5
   frameLeft: 0
   damage: 15
@@ -971,8 +967,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HitEffect: {fileID: 190192, guid: d78444703e3c5407eacee9025027f817, type: 2}
-  Owner: {fileID: 0}
-  TargetsHit: []
   hitBoxFrame: 5
   frameLeft: 0
   damage: 12
@@ -995,8 +989,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HitEffect: {fileID: 190192, guid: d78444703e3c5407eacee9025027f817, type: 2}
-  Owner: {fileID: 0}
-  TargetsHit: []
   hitBoxFrame: 3
   frameLeft: 0
   damage: 13
@@ -1019,8 +1011,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HitEffect: {fileID: 190192, guid: d78444703e3c5407eacee9025027f817, type: 2}
-  Owner: {fileID: 0}
-  TargetsHit: []
   hitBoxFrame: 10
   frameLeft: 0
   damage: 12
@@ -1123,8 +1113,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HitEffect: {fileID: 190192, guid: d78444703e3c5407eacee9025027f817, type: 2}
-  Owner: {fileID: 0}
-  TargetsHit: []
   hitBoxFrame: 6
   frameLeft: 0
   damage: 7
@@ -1175,8 +1163,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HitEffect: {fileID: 190192, guid: d78444703e3c5407eacee9025027f817, type: 2}
-  Owner: {fileID: 0}
-  TargetsHit: []
   hitBoxFrame: 3
   frameLeft: 0
   damage: 12
@@ -1199,8 +1185,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HitEffect: {fileID: 190192, guid: d78444703e3c5407eacee9025027f817, type: 2}
-  Owner: {fileID: 0}
-  TargetsHit: []
   hitBoxFrame: 10
   frameLeft: 0
   damage: 10
@@ -1223,8 +1207,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HitEffect: {fileID: 190192, guid: d78444703e3c5407eacee9025027f817, type: 2}
-  Owner: {fileID: 0}
-  TargetsHit: []
   hitBoxFrame: 5
   frameLeft: 0
   damage: 12
@@ -1279,7 +1261,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_TransformSyncMode: 2
-  m_SendInterval: 0.033333335
+  m_SendInterval: 0.05
   m_SyncRotationAxis: 7
   m_RotationSyncCompression: 0
   m_SyncSpin: 0
@@ -1343,7 +1325,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 796999559
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300302, guid: b62955136611c4b27b8c226d8eafbc8b, type: 3}
+  m_Sprite: {fileID: 21300036, guid: b62955136611c4b27b8c226d8eafbc8b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

@@ -43,6 +43,7 @@ public class PlayerInput : NetworkBehaviour {
 		//g_fighter = (GameObject)Instantiate (Inkachu);
 		fighter = g_fighter.GetComponent<Fighter> ();
 		player = PlayerContainer.Add (fighter);
+		FindObjectOfType<ResultContainer> ().Add (player);
 		this.gameObject.name = player.ToString ();
 		fighter.SetPlayer (player);
 		fighter.setName (player.ToString ());
