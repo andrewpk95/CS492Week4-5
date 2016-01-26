@@ -6,6 +6,10 @@ var timestamp;
 var username;
 var imgname;
 
+// MongoDB part
+var MongoClient = require('mongodb').MongoClient;
+var url = "mongodb://localhost/test";
+
 module.exports = function(app){
   app.get('/', function(res, res){
     res.end("Node-File-Upload");
@@ -31,10 +35,11 @@ module.exports = function(app){
   });
   
   app.post('/info', function(req, res){
-    console.log('/info request is incoming ', req.body);
+    console.log('/info request is incoming ', req.body.time);
     position = req.body.position;
     timestamp = req.body.time;
     username = req.body.username;
+    res.json({'response' : "Saved"});
   });
 
   app.get('/uploads/:file', function(req, res){
