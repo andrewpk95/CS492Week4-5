@@ -61,6 +61,15 @@ public class ChatFragment extends Fragment {
         }
     }
 
+    private Socket mSocket_game;
+    {
+        try {
+            mSocket_game = IO.socket(Constants.GAME_SERVER_URL);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     //Added
     private String TAG = "ChatFragment";
     private ImageButton send;
@@ -84,9 +93,10 @@ public class ChatFragment extends Fragment {
         mSocket.on("typing", onTyping);
         mSocket.on("stop typing", onStopTyping);
         mSocket.on("play response", onPlay);
+        mSocket_game.on("ResultResponse", onResultResponse);
 
         mSocket.connect();
-
+        mSocket_game.connect();
         startSignIn();
     }
 
@@ -108,6 +118,9 @@ public class ChatFragment extends Fragment {
         mSocket.off("typing", onTyping);
         mSocket.off("stop typing", onStopTyping);
         mSocket.off("play response", onPlay);
+
+        mSocket_game.disconnect();
+        mSocket_game.off("ResultResponse", onResultResponse);
     }
 
     @Override
@@ -167,13 +180,14 @@ public class ChatFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == -1){
-            Log.i(TAG, "onActivityResult 오 마아티 유니티");
+        if(requestCode == Constants.PLAY_REQUEST){
+            Log.i(TAG, "onActivityResult 오 마아티 유니티 requestCode is " + Constants.PLAY_REQUEST);
         }
         Log.i(TAG, "onActivityResult 오 마아티 유니티");
 
         if (Activity.RESULT_OK != resultCode) {
-            getActivity().finish();
+            Log.i(TAG, "getActivity().finish() is called");
+//            getActivity().finish();
             return;
         }
 
@@ -196,6 +210,7 @@ public class ChatFragment extends Fragment {
     @Override
     public void onResume(){
         super.onResume();
+        mSocket_game.emit("ResultRequest", "string");
     }
 
     @Override
@@ -309,7 +324,7 @@ public class ChatFragment extends Fragment {
                         mapIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         mapIntent.putExtra("username", mUsername);
 //                        getContext().startActivity(mapIntent);
-                        getActivity().startActivityForResult(mapIntent, -1);
+                        getActivity().startActivityForResult(mapIntent, Constants.PLAY_REQUEST);
                         break;
                     case DialogInterface.BUTTON_NEGATIVE:
 
@@ -400,22 +415,38 @@ public class ChatFragment extends Fragment {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    //call the unity application package
-                    //Make dialog to be invited by the game invitation, debug is not possilbe
-//                    JSONObject data = (JSONObject) args[0];
-//                    String username;
-//                    String message;
-//                    try {
-//                        username = data.getString("username");
-//                        message = data.getString("message");
-//                    } catch (JSONException e) {
-//                        return;
-//                    }
-//
-//                    removeTyping(username);
-//                    addMessage(username, message);
                     JSONObject data = (JSONObject) args[0];
                     JoinDialog(data);
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener onResultResponse = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject data = (JSONObject) args[0];
+                    Log.i(TAG, data.toString());
+                    String winner_name = null;
+                    boolean is_trust = false;
+
+                    try {
+                        winner_name = data.getString("data");
+                        is_trust = data.getBoolean("successful");
+                    } catch (JSONException e) {
+                        return;
+                    }
+
+                    if(is_trust){
+                        String message = winner_name + " won the game !! Enjoy ~ :D";
+                        addMessage(mUsername, message);
+
+                        // perform the sending message attempt.
+                        mSocket.emit("new message", message);
+                    }
                 }
             });
         }

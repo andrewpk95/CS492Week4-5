@@ -5,10 +5,13 @@ package com.passion.hamfeed;
  */
 public class Constants {
     public static final String CHAT_SERVER_URL = "http://143.248.140.92:1111";
+    public static final String GAME_SERVER_URL = "http://143.248.140.92:2222";
     public static final String IMG_SERVER_URL = "http://143.248.140.92:1112/upload";
     public static final String IMG_INFOR_URL = "http://143.248.140.92:1112/info";
     public static int LOGIN_OK = 10;
     public static int SELECT_IMG = 11;
+
+    public static final int PLAY_REQUEST = 12;
 
     //Soemthings required on chatting
     public static final int REQUEST_LOGIN = 0;
